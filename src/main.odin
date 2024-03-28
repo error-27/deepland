@@ -9,5 +9,5 @@ main :: proc() {
 
     defer rl.CloseWindow()
 
-    loop()
+    start_loop()
 }
