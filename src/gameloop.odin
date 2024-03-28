@@ -1,6 +1,7 @@
 package deepland
 
 import rl "vendor:raylib"
+import "entities"
 
 GameState :: enum {
     MENU,
@@ -14,16 +15,13 @@ menu_update :: proc() {
 }
 
 game_update :: proc() {
-
+    entities.plr_update()
 }
 
 draw :: proc() {
     rl.BeginDrawing()
         rl.ClearBackground(rl.RAYWHITE)
-        rl.DrawRectangle(10, 10, 40, 40, rl.GRAY)
-        if game_state == GameState.GAME {
-            rl.DrawText("playing game", 50, 50, 15, rl.GREEN)
-        }
+        entities.plr_draw()
     rl.EndDrawing()
 }
 
