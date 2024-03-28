@@ -5,12 +5,15 @@ import rl "vendor:raylib"
 GameState :: enum {
     MENU,
     GAME,
-    LOADING,
 }
 
 game_state: GameState // Should be changed to menu later on. this is just for testing
 
-update :: proc() {
+menu_update :: proc() {
+
+}
+
+game_update :: proc() {
 
 }
 
@@ -28,7 +31,10 @@ start_loop :: proc() {
     game_state = GameState.GAME
 
     for !rl.WindowShouldClose() {
-        update()
+        switch game_state {
+            case GameState.MENU: menu_update()
+            case GameState.GAME: game_update()
+        }
         draw()
     }
 }
