@@ -13,7 +13,7 @@ Player :: struct {
 
 plr := Player{20, 20, 0}
 
-plr_update :: proc() {
+plr_update :: proc(delta: f32) {
     left := rl.IsKeyDown(rl.KeyboardKey.LEFT)
     right := rl.IsKeyDown(rl.KeyboardKey.RIGHT)
     up := rl.IsKeyDown(rl.KeyboardKey.UP)

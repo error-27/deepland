@@ -10,12 +10,12 @@ GameState :: enum {
 
 game_state: GameState // Should be changed to menu later on. this is just for testing
 
-menu_update :: proc() {
+menu_update :: proc(delta: f32) {
 
 }
 
-game_update :: proc() {
-    entities.plr_update()
+game_update :: proc(delta: f32) {
+    entities.plr_update(delta)
 }
 
 draw :: proc() {
@@ -29,9 +29,10 @@ start_loop :: proc() {
     game_state = GameState.GAME
 
     for !rl.WindowShouldClose() {
+        delta := rl.GetFrameTime()
         switch game_state {
-            case GameState.MENU: menu_update()
-            case GameState.GAME: game_update()
+            case GameState.MENU: menu_update(delta)
+            case GameState.GAME: game_update(delta)
         }
         draw()
     }
