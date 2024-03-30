@@ -10,6 +10,8 @@ GameState :: enum {
 
 game_state: GameState // Should be changed to menu later on. this is just for testing
 
+camera: rl.Camera2D
+
 menu_update :: proc(delta: f32) {
 
 }
@@ -21,12 +23,16 @@ game_update :: proc(delta: f32) {
 draw :: proc() {
     rl.BeginDrawing()
         rl.ClearBackground(rl.RAYWHITE)
-        entities.plr_draw()
+        rl.BeginMode2D(camera)
+            entities.plr_draw()
+        rl.EndMode2D()
     rl.EndDrawing()
 }
 
 start_loop :: proc() {
     game_state = GameState.GAME
+    camera = rl.Camera2D{0,0,0,0} // initialize a default camera
+    camera.zoom = 1.0
 
     for !rl.WindowShouldClose() {
         delta := rl.GetFrameTime()
