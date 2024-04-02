@@ -4,7 +4,7 @@ import rl "vendor:raylib"
 import "core:fmt"
 import "core:math"
 
-PLR_SIZE :: 32
+PLR_SIZE :: 16
 PLR_SPEED :: 200
 
 Player :: struct {
