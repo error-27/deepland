@@ -11,7 +11,6 @@ GameState :: enum {
 game_state: GameState // Should be changed to menu later on. this is just for testing
 
 camera: rl.Camera2D
-window_camera: rl.Camera2D
 
 rtex_rect: rl.Rectangle = {0, 0, SCREEN_WIDTH, -SCREEN_HEIGHT}
 window_rect: rl.Rectangle = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT}
@@ -26,9 +25,11 @@ game_update :: proc(delta: f32) {
 }
 
 draw :: proc() {
+    // Draw to a small texture to be scaled up
     rl.BeginTextureMode(screen_target)
         rl.ClearBackground(rl.RAYWHITE)
 
+        // Render Camera
         rl.BeginMode2D(camera)
             rl.DrawRectangleGradientH(40, 40, 50, 30, rl.RED, rl.BLUE)
             rl.DrawCircle(200, 100, 40, rl.LIGHTGRAY)
@@ -38,9 +39,8 @@ draw :: proc() {
 
     rl.BeginDrawing()
         rl.ClearBackground(rl.BLACK)
-        rl.BeginMode2D(window_camera)
-            rl.DrawTexturePro(screen_target.texture, rtex_rect, window_rect, {0,0}, 0, rl.WHITE)
-        rl.EndMode2D()
+        // Draw upscaled texture
+        rl.DrawTexturePro(screen_target.texture, rtex_rect, window_rect, {0,0}, 0, rl.WHITE)
     rl.EndDrawing()
 }
 
@@ -48,9 +48,6 @@ start_loop :: proc() {
     game_state = GameState.GAME
     camera = rl.Camera2D{0,0,0,0} // initialize a default camera
     camera.zoom = 1.0
-
-    window_camera = rl.Camera2D{0,0,0,0}
-    window_camera.zoom = 1.0
 
     for !rl.WindowShouldClose() {
         delta := rl.GetFrameTime()
