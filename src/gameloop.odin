@@ -22,6 +22,7 @@ menu_update :: proc(delta: f32) {
 
 game_update :: proc(delta: f32) {
     entities.plr_update(delta)
+    camera.target = {cast(f32)entities.plr.x - SCREEN_WIDTH/2 + 8, cast(f32)entities.plr.y - SCREEN_HEIGHT/2 + 8}
 }
 
 draw :: proc() {
@@ -29,6 +30,8 @@ draw :: proc() {
         rl.ClearBackground(rl.RAYWHITE)
 
         rl.BeginMode2D(camera)
+            rl.DrawRectangleGradientH(40, 40, 50, 30, rl.RED, rl.BLUE)
+            rl.DrawCircle(200, 100, 40, rl.LIGHTGRAY)
             entities.plr_draw()
         rl.EndMode2D()
     rl.EndTextureMode()
