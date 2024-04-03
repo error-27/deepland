@@ -21,6 +21,7 @@ menu_update :: proc(delta: f32) {
 
 game_update :: proc(delta: f32) {
     entities.plr_update(delta)
+    entities.update(delta)
     camera.target = {cast(f32)entities.plr.x - SCREEN_WIDTH/2 + 8, cast(f32)entities.plr.y - SCREEN_HEIGHT/2 + 8}
 }
 
@@ -34,6 +35,7 @@ draw :: proc() {
             rl.DrawRectangleGradientH(40, 40, 50, 30, rl.RED, rl.BLUE)
             rl.DrawCircle(200, 100, 40, rl.LIGHTGRAY)
             entities.plr_draw()
+            entities.draw()
         rl.EndMode2D()
     rl.EndTextureMode()
 
@@ -48,6 +50,8 @@ start_loop :: proc() {
     game_state = GameState.GAME
     camera = rl.Camera2D{0,0,0,0} // initialize a default camera
     camera.zoom = 1.0
+
+    entities.create(20, 20, entities.Species.TestObj)
 
     for !rl.WindowShouldClose() {
         delta := rl.GetFrameTime()

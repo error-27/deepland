@@ -26,23 +26,8 @@ plr_update :: proc(delta: f32) {
     h_dir := cast(i32)right - cast(i32)left
     v_dir := cast(i32)down - cast(i32)up
 
-    plr.rx += cast(f32)h_dir * cast(f32)PLR_SPEED * delta
-    movex := math.round_f32(plr.rx)
-    if movex != 0 {
-        plr.rx -= movex
-        sign := math.sign(movex)
-        //TODO: Write pixel-by-pixel collision
-        plr.x += cast(i32)movex
-    }
-
-    plr.ry += cast(f32)v_dir * cast(f32)PLR_SPEED * delta
-    movey := math.round_f32(plr.ry)
-    if movey != 0 {
-        plr.ry -= movey
-        sign := math.sign(movey)
-        //TODO: Write pixel-by-pixel collision
-        plr.y += cast(i32)movey
-    }
+    moveX(&plr.x, &plr.rx, cast(f32)h_dir * cast(f32)PLR_SPEED, delta)
+    moveY(&plr.y, &plr.ry, cast(f32)v_dir * cast(f32)PLR_SPEED, delta)
 }
 
 plr_draw :: proc() {
