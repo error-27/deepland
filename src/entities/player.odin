@@ -5,7 +5,7 @@ import "core:fmt"
 import "core:math"
 
 PLR_SIZE :: 16
-PLR_SPEED :: 200
+PLR_SPEED :: 100
 
 Player :: struct {
     x: i32,
