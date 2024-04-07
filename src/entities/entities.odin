@@ -8,17 +8,28 @@ Entity :: struct {
     y: i32,
     rx: f32,
     ry: f32,
-    species: Species
+    species: Species,
+    update: proc(me: ^Entity, delta: f32),
+    draw: proc(me: ^Entity)
 }
 
 Species :: enum {
     TestObj
 }
 
+Direction :: enum {
+    Up,
+    Right,
+    Down,
+    Left
+}
+
 entities: [dynamic]Entity
 
 create :: proc(x: i32, y: i32, species: Species) -> int {
-    e := Entity{x, y, 0, 0, species}
+    e := Entity{x, y, 0, 0, species, nil, nil}
+    e.update = testobj_update
+    e.draw = testobj_draw
     append(&entities, e)
     return len(&entities)
 }
@@ -52,22 +63,22 @@ moveY :: proc(y: ^i32, ry: ^f32, speed: f32, delta: f32) {
 update :: proc(delta: f32) {
     for i in 0..<len(entities) {
         e := &entities[i]
-        switch e^.species {
-            case Species.TestObj: testobj_update(e, delta)
-        }
+        // }
+        e.update(e, delta)
     }
 }
 
 draw :: proc() {
     for i in 0..<len(entities) {
         e := &entities[i]
-        switch e^.species {
-            case Species.TestObj:
-                rl.DrawText("THIS IS A LITTLE GUY", e^.x, e^.y, 10, rl.PURPLE)
-        }
+        e.draw(e)
     }
 }
 
 testobj_update :: proc(me: ^Entity, delta: f32) {
     moveX(&me.x, &me.rx, 3, delta)
+}
+
+testobj_draw :: proc(me: ^Entity) {
+    rl.DrawText("THIS IS A LITTLE GUY", me^.x, me^.y, 10, rl.PURPLE)
 }

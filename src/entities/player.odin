@@ -12,10 +12,10 @@ Player :: struct {
     y: i32,
     rx: f32,
     ry: f32,
-    dir: u8
+    dir: Direction
 }
 
-plr := Player{20, 20, 0, 0, 0}
+plr := Player{}
 
 plr_update :: proc(delta: f32) {
     left := rl.IsKeyDown(rl.KeyboardKey.LEFT)
