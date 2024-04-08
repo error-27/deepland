@@ -9,12 +9,16 @@ Entity :: struct {
     rx: f32,
     ry: f32,
     species: Species,
-    update: proc(me: ^Entity, delta: f32),
-    draw: proc(me: ^Entity)
+}
+
+Frog :: struct {
+    froginess: i32,
+    using entity: Entity
 }
 
 Species :: enum {
-    TestObj
+    TestObj,
+    Frog
 }
 
 Direction :: enum {
@@ -24,12 +28,13 @@ Direction :: enum {
     Left
 }
 
-entities: [dynamic]Entity
+entities: [dynamic]^Entity
 
 create :: proc(x: i32, y: i32, species: Species) -> int {
-    e := Entity{x, y, 0, 0, species, nil, nil}
-    e.update = testobj_update
-    e.draw = testobj_draw
+    e := init_procs[species]()
+    e.x = x
+    e.y = y
+    e.species = species
     append(&entities, e)
     return len(&entities)
 }
@@ -62,23 +67,15 @@ moveY :: proc(y: ^i32, ry: ^f32, speed: f32, delta: f32) {
 
 update :: proc(delta: f32) {
     for i in 0..<len(entities) {
-        e := &entities[i]
-        // }
-        e.update(e, delta)
+        e := entities[i]
+        update_procs[e.species](e, delta)
+        // testobj_update(e, delta)
     }
 }
 
 draw :: proc() {
     for i in 0..<len(entities) {
-        e := &entities[i]
-        e.draw(e)
+        e := entities[i]
+        draw_procs[e.species](e)
     }
-}
-
-testobj_update :: proc(me: ^Entity, delta: f32) {
-    moveX(&me.x, &me.rx, 3, delta)
-}
-
-testobj_draw :: proc(me: ^Entity) {
-    rl.DrawText("THIS IS A LITTLE GUY", me^.x, me^.y, 10, rl.PURPLE)
 }

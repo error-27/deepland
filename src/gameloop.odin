@@ -52,6 +52,7 @@ start_loop :: proc() {
     camera.zoom = 1.0
 
     entities.create(20, 20, entities.Species.TestObj)
+    entities.create(40, 10, entities.Species.Frog)
 
     for !rl.WindowShouldClose() {
         delta := rl.GetFrameTime()
