@@ -8,7 +8,6 @@ Entity :: struct {
     y: i32,
     rx: f32,
     ry: f32,
-    species: Species,
 }
 
 Frog :: struct {
@@ -28,12 +27,16 @@ Direction :: enum {
     Left
 }
 
-entities: [dynamic]^Entity
+EPtr :: struct {
+    species: Species,
+    ptr: rawptr
+}
+
+entities: [dynamic]EPtr
 
 create :: proc(x: i32, y: i32, species: Species) -> int {
-    e := init_procs[species]()
-    e.x = x
-    e.y = y
+    e: EPtr
+    e.ptr = init_procs[species](x, y)
     e.species = species
     append(&entities, e)
     return len(&entities)
@@ -68,7 +71,7 @@ moveY :: proc(y: ^i32, ry: ^f32, speed: f32, delta: f32) {
 update :: proc(delta: f32) {
     for i in 0..<len(entities) {
         e := entities[i]
-        update_procs[e.species](e, delta)
+        update_procs[e.species](e.ptr, delta)
         // testobj_update(e, delta)
     }
 }
@@ -76,6 +79,6 @@ update :: proc(delta: f32) {
 draw :: proc() {
     for i in 0..<len(entities) {
         e := entities[i]
-        draw_procs[e.species](e)
+        draw_procs[e.species](e.ptr)
     }
 }
