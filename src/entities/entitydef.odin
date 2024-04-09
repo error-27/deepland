@@ -3,24 +3,24 @@ package entities
 import rl "vendor:raylib"
 import "core:fmt"
 
-init_procs := [Species]proc(x: i32, y: i32) -> rawptr{
+init_procs := [Species]proc(x: i32, y: i32) -> rawptr {
     .TestObj = testobj_init,
     .Frog = frog_init
 }
 
-update_procs := [Species]proc(me: rawptr, delta: f32){
+update_procs := [Species]proc(me: rawptr, delta: f32) {
     .TestObj = testobj_update,
     .Frog = frog_update
 }
 
-draw_procs := [Species]proc(me: rawptr){
+draw_procs := [Species]proc(me: rawptr) {
     .TestObj = testobj_draw,
     .Frog = frog_draw
 }
 
-die_procs := [Species]proc(me: rawptr) -> bool{
+die_procs := [Species]proc(me: rawptr) -> bool {
     .TestObj = testobj_die,
-    .Frog = testobj_die
+    .Frog = frog_die
 }
 
 // --------------------
@@ -45,7 +45,8 @@ testobj_draw :: proc(me: rawptr) {
 }
 
 testobj_die :: proc(me: rawptr) -> bool {
-    return false
+    e := cast(^Entity)me
+    return e.x > 30
 }
 
 frog_init :: proc(x: i32, y: i32) -> rawptr {
@@ -66,4 +67,8 @@ frog_draw :: proc(me: rawptr) {
     frog := cast(^Frog)me
     rl.DrawCircle(frog.x, frog.y, 4, rl.GREEN)
     rl.DrawCircle(frog.x + frog.froginess, frog.y - frog.froginess, 2, rl.RED)
+}
+
+frog_die :: proc(me: rawptr) -> bool {
+    return false
 }

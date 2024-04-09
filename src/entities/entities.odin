@@ -2,6 +2,7 @@ package entities
 
 import rl "vendor:raylib"
 import "core:math"
+import "core:fmt"
 
 Entity :: struct {
     x: i32,
@@ -69,10 +70,17 @@ moveY :: proc(y: ^i32, ry: ^f32, speed: f32, delta: f32) {
 }
 
 update :: proc(delta: f32) {
-    for i in 0..<len(entities) {
+    i := 0
+    for i < len(entities) {
         e := entities[i]
         update_procs[e.species](e.ptr, delta)
-        // testobj_update(e, delta)
+        if die_procs[e.species](e.ptr) {
+            free(e.ptr)
+            ordered_remove(&entities, i)
+            i -= 1
+            fmt.println("killed entity")
+        }
+        i += 1
     }
 }
 
