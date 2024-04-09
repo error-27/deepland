@@ -52,6 +52,7 @@ frog_init :: proc(x: i32, y: i32) -> rawptr {
     e := new(Frog)
     e.x = x
     e.y = y
+    e.froginess = 5
     return rawptr(e)
 }
 
@@ -64,5 +65,5 @@ frog_update :: proc(me: rawptr, delta: f32) {
 frog_draw :: proc(me: rawptr) {
     frog := cast(^Frog)me
     rl.DrawCircle(frog.x, frog.y, 4, rl.GREEN)
-    // rl.DrawCircle(frog.x + frog.froginess, frog.y - frog.froginess, 2, rl.RED)
+    rl.DrawCircle(frog.x + frog.froginess, frog.y - frog.froginess, 2, rl.RED)
 }
