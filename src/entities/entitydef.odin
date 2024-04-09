@@ -3,6 +3,7 @@ package entities
 import rl "vendor:raylib"
 import "core:fmt"
 
+// Lists of entity procedures
 init_procs := [Species]proc(x: i32, y: i32) -> rawptr {
     .TestObj = testobj_init,
     .Frog = frog_init
@@ -23,10 +24,11 @@ die_procs := [Species]proc(me: rawptr) -> bool {
     .Frog = frog_die
 }
 
-// --------------------
+// ====================
 // ENTITY BEHAVIOR DEFS
-// --------------------
+// ====================
 
+// ----------------- TESTOBJ -----------------
 testobj_init :: proc(x: i32, y: i32) -> rawptr {
     e := new(Entity)
     e.x = x
@@ -49,6 +51,7 @@ testobj_die :: proc(me: rawptr) -> bool {
     return e.x > 30
 }
 
+// ----------------- FROG -----------------
 frog_init :: proc(x: i32, y: i32) -> rawptr {
     e := new(Frog)
     e.x = x
@@ -71,4 +74,27 @@ frog_draw :: proc(me: rawptr) {
 
 frog_die :: proc(me: rawptr) -> bool {
     return false
+}
+
+// ====================
+// TYPE DEFS
+// ====================
+
+Entity :: struct {
+    x: i32,
+    y: i32,
+    rx: f32,
+    ry: f32,
+}
+
+Direction :: enum {
+    Up,
+    Right,
+    Down,
+    Left
+}
+
+Frog :: struct {
+    froginess: i32,
+    using entity: Entity
 }
