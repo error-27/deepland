@@ -62,4 +62,6 @@ start_loop :: proc() {
         }
         draw()
     }
+
+    entities.clear_entities()
 }
