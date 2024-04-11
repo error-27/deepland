@@ -2,6 +2,7 @@ package deepland
 
 import rl "vendor:raylib"
 import "entities"
+import "world"
 
 GameState :: enum {
     MENU,
@@ -32,8 +33,9 @@ draw :: proc() {
 
         // Render Camera
         rl.BeginMode2D(camera)
-            rl.DrawRectangleGradientH(40, 40, 50, 30, rl.RED, rl.BLUE)
-            rl.DrawCircle(200, 100, 40, rl.LIGHTGRAY)
+            for c in world.chunks {
+                world.draw_chunk(c)
+            }
             entities.plr_draw()
             entities.draw()
         rl.EndMode2D()
@@ -53,6 +55,8 @@ start_loop :: proc() {
 
     entities.create(20, 20, entities.Species.TestObj)
     entities.create(40, 10, entities.Species.Frog)
+
+    world.init_chunks()
 
     for !rl.WindowShouldClose() {
         delta := rl.GetFrameTime()
