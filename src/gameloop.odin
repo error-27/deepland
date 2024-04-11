@@ -53,9 +53,6 @@ start_loop :: proc() {
     camera = rl.Camera2D{0,0,0,0} // initialize a default camera
     camera.zoom = 1.0
 
-    entities.create(20, 20, entities.Species.TestObj)
-    entities.create(40, 10, entities.Species.Frog)
-
     world.init_chunks()
 
     for !rl.WindowShouldClose() {
