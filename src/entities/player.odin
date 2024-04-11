@@ -8,12 +8,12 @@ PLR_SIZE :: 16
 PLR_SPEED :: 100
 
 Player :: struct {
-    x: i32,
+    x: i32, // Position
     y: i32,
-    rx: f32,
+    rx: f32, // Subpixel Position (remainder)
     ry: f32,
     dir: Direction,
-    cx: i32,
+    cx: i32, // Chunk Position
     cy: i32
 }
 
