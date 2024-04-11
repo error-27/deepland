@@ -29,16 +29,14 @@ game_update :: proc(delta: f32) {
 draw :: proc() {
     // Draw to a small texture to be scaled up
     rl.BeginTextureMode(screen_target)
-        rl.ClearBackground(rl.RAYWHITE)
+        rl.ClearBackground(rl.BLACK)
 
-        // Render Camera
-        rl.BeginMode2D(camera)
-            for c in world.chunks {
-                world.draw_chunk(c)
-            }
-            entities.plr_draw()
-            entities.draw()
-        rl.EndMode2D()
+        switch game_state {
+            case .GAME:
+                game_draw()
+            case .MENU:
+                menu_draw()
+        }        
     rl.EndTextureMode()
 
     rl.BeginDrawing()
@@ -48,8 +46,23 @@ draw :: proc() {
     rl.EndDrawing()
 }
 
+menu_draw :: proc() {
+    rl.DrawText("THIS IS A MENU", 10, 10, 20, rl.RED)
+}
+
+game_draw :: proc() {
+    // Render Camera
+    rl.BeginMode2D(camera)
+        for c in world.chunks {
+            world.draw_chunk(c)
+        }
+        entities.plr_draw()
+        entities.draw()
+    rl.EndMode2D()
+}
+
 start_loop :: proc() {
-    game_state = GameState.GAME
+    game_state = GameState.MENU
     camera = rl.Camera2D{0,0,0,0} // initialize a default camera
     camera.zoom = 1.0
 
@@ -58,8 +71,10 @@ start_loop :: proc() {
     for !rl.WindowShouldClose() {
         delta := rl.GetFrameTime()
         switch game_state {
-            case GameState.MENU: menu_update(delta)
-            case GameState.GAME: game_update(delta)
+            case GameState.MENU: 
+                menu_update(delta)
+            case GameState.GAME: 
+                game_update(delta)
         }
         draw()
     }
