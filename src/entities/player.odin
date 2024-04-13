@@ -31,8 +31,8 @@ plr_update :: proc(delta: f32) {
     moveX(&plr.x, &plr.rx, cast(f32)h_dir * cast(f32)PLR_SPEED, delta)
     moveY(&plr.y, &plr.ry, cast(f32)v_dir * cast(f32)PLR_SPEED, delta)
 
-    plr.cx = i32(math.floor(f32(plr.x) / 16))
-    plr.cy = i32(math.floor(f32(plr.y) / 16))
+    plr.cx = i32(math.floor(f32(plr.x) / 256))
+    plr.cy = i32(math.floor(f32(plr.y) / 256))
 }
 
 plr_draw :: proc() {

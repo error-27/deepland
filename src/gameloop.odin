@@ -1,6 +1,8 @@
 package deepland
 
 import rl "vendor:raylib"
+import "core:strconv"
+import "core:strings"
 import "entities"
 import "world"
 
