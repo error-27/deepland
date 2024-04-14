@@ -52,3 +52,19 @@ start_loop :: proc() {
 
     game_end()
 }
+
+switch_state :: proc(new_state: GameState) {
+    switch game_state {
+        case .GAME:
+            game_end()
+        case .MENU:
+            menu_end()
+    }
+
+    switch new_state {
+        case .GAME:
+            game_init()
+        case .MENU:
+            menu_init()
+    }
+}
