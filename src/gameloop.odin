@@ -35,9 +35,7 @@ draw :: proc() {
 }
 
 start_loop :: proc() {
-    game_state = GameState.MENU
-
-    game_init()
+    switch_state(.GAME)
 
     for !rl.WindowShouldClose() {
         delta := rl.GetFrameTime()
@@ -51,6 +49,7 @@ start_loop :: proc() {
     }
 
     game_end()
+    menu_end()
 }
 
 switch_state :: proc(new_state: GameState) {
@@ -67,4 +66,6 @@ switch_state :: proc(new_state: GameState) {
         case .MENU:
             menu_init()
     }
+
+    game_state = new_state
 }
