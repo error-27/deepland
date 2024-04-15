@@ -35,7 +35,7 @@ draw :: proc() {
 }
 
 start_loop :: proc() {
-    switch_state(.GAME)
+    switch_state(.MENU)
 
     for !rl.WindowShouldClose() {
         delta := rl.GetFrameTime()
