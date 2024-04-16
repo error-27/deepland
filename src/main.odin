@@ -16,6 +16,7 @@ screen_target: rl.RenderTexture2D
 main :: proc() {
     // Set up window
     rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "deepland")
+    rl.SetExitKey(rl.KeyboardKey.KEY_NULL)
     screen_target = rl.LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT)
     rl.SetTargetFPS(60)
     rl.HideCursor()
