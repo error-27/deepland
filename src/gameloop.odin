@@ -31,6 +31,7 @@ draw :: proc() {
         rl.ClearBackground(rl.BLACK)
         // Draw upscaled texture
         rl.DrawTexturePro(screen_target.texture, rtex_rect, window_rect, {0,0}, 0, rl.WHITE)
+        rl.DrawFPS(1, 1)
     rl.EndDrawing()
 }
 

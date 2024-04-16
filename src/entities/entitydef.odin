@@ -51,8 +51,7 @@ testobj_draw :: proc(me: rawptr) {
 
 @(private="file")
 testobj_die :: proc(me: rawptr) -> bool {
-    e := cast(^Entity)me
-    return e.x > 30
+    return false
 }
 
 // ----------------- FROG -----------------
