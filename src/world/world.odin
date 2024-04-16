@@ -15,13 +15,9 @@ Tile :: struct {
     state: u8
 }
 
-FloorType :: enum {
+Floor :: enum {
     DIRT,
     GRASS
-}
-
-Floor :: struct {
-    type: FloorType
 }
 
 Chunk :: struct {
@@ -31,7 +27,7 @@ Chunk :: struct {
     y: i32,
 }
 
-chunks: [dynamic]Chunk
+chunks: map[[2]i32]Chunk
 
 init_chunks :: proc() {
     generate_chunk(0, 0)
@@ -46,22 +42,23 @@ generate_chunk :: proc(x: i32, y: i32) {
         for ny in 0..<16 {
             v := rl.GetImageColor(noise, i32(nx), i32(ny))[0]
             if v > THRESHOLD {
-                c.floors[nx][ny] = Floor{FloorType.DIRT}
+                c.floors[nx][ny] = .DIRT
             } else {
-                c.floors[nx][ny] = Floor{FloorType.GRASS}
+                c.floors[nx][ny] = .GRASS
             }
         }
     }
 
     c.x = x
     c.y = y
-    append(&chunks, c)
+    chunks[{x, y}] = c
 }
 
-draw_chunk :: proc(c: Chunk) {
+draw_chunk :: proc(coord: [2]i32) {
+    c := chunks[coord]
     for x in 0..<16 {
         for y in 0..<16 {
-            switch c.floors[x][y].type {
+            switch c.floors[x][y] {
                 case .DIRT:
                     rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, rl.BROWN)
                 case .GRASS:
