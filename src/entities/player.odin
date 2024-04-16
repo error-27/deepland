@@ -17,7 +17,11 @@ Player :: struct {
     cy: i32
 }
 
-plr := Player{}
+plr: Player
+
+plr_init :: proc() {
+    plr = Player{}
+}
 
 plr_update :: proc(delta: f32) {
     left := rl.IsKeyDown(rl.KeyboardKey.LEFT)
