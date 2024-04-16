@@ -31,8 +31,6 @@ chunks: map[[2]i32]Chunk
 
 init_chunks :: proc() {
     generate_chunk(0, 0)
-    generate_chunk(1, 0)
-    generate_chunk(1, 1)
 }
 
 generate_chunk :: proc(x: i32, y: i32) {
@@ -66,4 +64,8 @@ draw_chunk :: proc(coord: [2]i32) {
             }
         }
     }
+}
+
+clear_chunks :: proc() {
+    clear(&chunks)
 }

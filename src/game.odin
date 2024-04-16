@@ -25,6 +25,11 @@ game_update :: proc(delta: f32) {
     if rl.IsKeyPressed(rl.KeyboardKey.ESCAPE) {
         switch_state(.MENU)
     }
+
+    // Generate new chunks where needed
+    if !({entities.plr.cx, entities.plr.cy} in world.chunks) {
+        world.generate_chunk(entities.plr.cx, entities.plr.cy)
+    }
 }
 
 game_draw :: proc() {
@@ -40,4 +45,5 @@ game_draw :: proc() {
 
 game_end :: proc() {
     entities.clear_entities()
+    world.clear_chunks()
 }
