@@ -6,6 +6,9 @@ import "world"
 
 camera: rl.Camera2D
 
+@(private="file")
+paused := false
+
 game_init :: proc() {
     entities.plr_init()
 
@@ -15,15 +18,23 @@ game_init :: proc() {
     camera.target = {cast(f32)entities.plr.x - SCREEN_WIDTH/2 + 8, cast(f32)entities.plr.y - SCREEN_HEIGHT/2 + 8}
 
     world.init_chunks()
+    entities.create(10, 10, .TestObj)
 }
 
 game_update :: proc(delta: f32) {
-    entities.plr_update(delta)
-    entities.update(delta)
-    camera.target = {cast(f32)entities.plr.x - SCREEN_WIDTH/2 + 8, cast(f32)entities.plr.y - SCREEN_HEIGHT/2 + 8}
+    if !paused {
+        entities.plr_update(delta)
+        entities.update(delta)
+        camera.target = {cast(f32)entities.plr.x - SCREEN_WIDTH/2 + 8, cast(f32)entities.plr.y - SCREEN_HEIGHT/2 + 8}
+    }
 
     if rl.IsKeyPressed(rl.KeyboardKey.ESCAPE) {
+        paused = !paused
+    }
+
+    if rl.IsKeyDown(rl.KeyboardKey.LEFT_ALT) && rl.IsKeyPressed(rl.KeyboardKey.ESCAPE) {
         switch_state(.MENU)
+        paused = false
     }
 
     // Generate new chunks where needed
