@@ -13,7 +13,7 @@ game_init :: proc() {
     entities.plr_init()
 
     camera = rl.Camera2D{0,0,0,0} // initialize a default camera
-    camera.zoom = 1.0
+    camera.zoom = 1
 
     camera.target = {cast(f32)entities.plr.x - SCREEN_WIDTH/2 + 8, cast(f32)entities.plr.y - SCREEN_HEIGHT/2 + 8}
 
@@ -38,8 +38,13 @@ game_update :: proc(delta: f32) {
     }
 
     // Generate new chunks where needed
-    if !({entities.plr.cx, entities.plr.cy} in world.chunks) {
-        world.generate_chunk(entities.plr.cx, entities.plr.cy)
+    // This is done in a 3x3 shape around the player
+    for cx in -1..=1 {
+        for cy in -1..=1 {
+            if !({entities.plr.cx + i32(cx), entities.plr.cy + i32(cy)} in world.chunks) {
+                world.generate_chunk(entities.plr.cx + i32(cx), entities.plr.cy + i32(cy))
+            }
+        }
     }
 }
 
