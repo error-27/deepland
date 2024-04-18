@@ -11,25 +11,27 @@ Species :: enum {
 }
 
 // Stores an entity without needing its type
-EPtr :: struct {
+Entity :: struct {
+    x: i32,
+    y: i32,
+    rx: f32,
+    ry: f32,
     species: Species,
-    ptr: rawptr
+    data: rawptr
 }
 
-entities: [dynamic]EPtr // The current array of entities
+entities: [dynamic]Entity // The current array of entities
 
 // Procedures for managing and updating entities
 create :: proc(x: i32, y: i32, species: Species) -> int {
-    e: EPtr
-    e.ptr = init_procs[species](x, y)
-    e.species = species
+    e := init_procs[species](x, y)
     append(&entities, e)
     return len(&entities) // might not be useful. well, better safe than sorry???
 }
 
 clear_entities :: proc() {
     for e in entities {
-        free(e.ptr)
+        free(e.data)
     }
     clear(&entities)
 }
@@ -37,12 +39,12 @@ clear_entities :: proc() {
 update :: proc(delta: f32) {
     i := 0
     for i < len(entities) {
-        e := entities[i]
-        update_procs[e.species](e.ptr, delta) // Run the correct update procedure
+        e := &entities[i]
+        update_procs[e.species](e, delta) // Run the correct update procedure
         
         // If the entity dies, free its resources and remove it
-        if die_procs[e.species](e.ptr) {
-            free(e.ptr)
+        if die_procs[e.species](e) {
+            free(e.data)
             ordered_remove(&entities, i)
             i -= 1 // Step back so we don't skip the next entity
         }
@@ -52,8 +54,8 @@ update :: proc(delta: f32) {
 
 draw :: proc() {
     for i in 0..<len(entities) {
-        e := entities[i]
-        draw_procs[e.species](e.ptr)
+        e := &entities[i]
+        draw_procs[e.species](e)
     }
 }
 

@@ -4,22 +4,22 @@ import rl "vendor:raylib"
 import "core:fmt"
 
 // Lists of entity procedures
-init_procs := [Species]proc(x: i32, y: i32) -> rawptr {
+init_procs := [Species]proc(x: i32, y: i32) -> Entity {
     .TestObj = testobj_init,
     .Frog = frog_init
 }
 
-update_procs := [Species]proc(me: rawptr, delta: f32) {
+update_procs := [Species]proc(me: ^Entity, delta: f32) {
     .TestObj = testobj_update,
     .Frog = frog_update
 }
 
-draw_procs := [Species]proc(me: rawptr) {
+draw_procs := [Species]proc(me: ^Entity) {
     .TestObj = testobj_draw,
     .Frog = frog_draw
 }
 
-die_procs := [Species]proc(me: rawptr) -> bool {
+die_procs := [Species]proc(me: ^Entity) -> bool {
     .TestObj = testobj_die,
     .Frog = frog_die
 }
@@ -30,56 +30,59 @@ die_procs := [Species]proc(me: rawptr) -> bool {
 
 // ----------------- TESTOBJ -----------------
 @(private="file")
-testobj_init :: proc(x: i32, y: i32) -> rawptr {
-    e := new(Entity)
+testobj_init :: proc(x: i32, y: i32) -> Entity {
+    edata := rawptr(new(EntityData))
+    e := Entity{}
     e.x = x
     e.y = y
-    return rawptr(e)
+    e.species = .TestObj
+    e.data = edata
+    return e
 }
 
 @(private="file")
-testobj_update :: proc(me: rawptr, delta: f32) {
-    e := cast(^Entity)me
-    moveX(&e.x, &e.rx, 3, delta)
+testobj_update :: proc(me: ^Entity, delta: f32) {
+    moveX(&me.x, &me.rx, 3, delta)
 }
 
 @(private="file")
-testobj_draw :: proc(me: rawptr) {
-    e := cast(^Entity)me
-    rl.DrawText("CREATURE", e.x, e.y, 10, rl.PURPLE)
+testobj_draw :: proc(me: ^Entity) {
+    rl.DrawText("CREATURE", me.x, me.y, 10, rl.PURPLE)
 }
 
 @(private="file")
-testobj_die :: proc(me: rawptr) -> bool {
+testobj_die :: proc(me: ^Entity) -> bool {
     return false
 }
 
 // ----------------- FROG -----------------
 @(private="file")
-frog_init :: proc(x: i32, y: i32) -> rawptr {
-    e := new(Frog)
+frog_init :: proc(x: i32, y: i32) -> Entity {
+    edata := new(FrogData)
+    e := Entity{}
     e.x = x
     e.y = y
-    e.froginess = 5
-    return rawptr(e)
+    e.species = .Frog
+    edata.froginess = 5
+    e.data = rawptr(edata)
+    return e
 }
 
 @(private="file")
-frog_update :: proc(me: rawptr, delta: f32) {
-    e := cast(^Frog)me
-    moveY(&e.y, &e.ry, 4, delta)
-    moveX(&e.x, &e.rx, 2.5, delta)
+frog_update :: proc(me: ^Entity, delta: f32) {
+    moveY(&me.y, &me.ry, 4, delta)
+    moveX(&me.x, &me.rx, 2.5, delta)
 }
 
 @(private="file")
-frog_draw :: proc(me: rawptr) {
-    frog := cast(^Frog)me
-    rl.DrawCircle(frog.x, frog.y, 4, rl.GREEN)
-    rl.DrawCircle(frog.x + frog.froginess, frog.y - frog.froginess, 2, rl.RED)
+frog_draw :: proc(me: ^Entity) {
+    frog := cast(^FrogData)me.data
+    rl.DrawCircle(me.x, me.y, 4, rl.GREEN)
+    rl.DrawCircle(me.x + frog.froginess, me.y - frog.froginess, 2, rl.RED)
 }
 
 @(private="file")
-frog_die :: proc(me: rawptr) -> bool {
+frog_die :: proc(me: ^Entity) -> bool {
     return false
 }
 
@@ -87,11 +90,8 @@ frog_die :: proc(me: rawptr) -> bool {
 // TYPE DEFS
 // ====================
 
-Entity :: struct {
-    x: i32,
-    y: i32,
-    rx: f32,
-    ry: f32,
+EntityData :: struct {
+
 }
 
 Direction :: enum {
@@ -101,7 +101,7 @@ Direction :: enum {
     Left
 }
 
-Frog :: struct {
+FrogData :: struct {
     froginess: i32,
-    using entity: Entity
+    using entity: EntityData
 }
