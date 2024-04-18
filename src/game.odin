@@ -51,9 +51,11 @@ game_update :: proc(delta: f32) {
 game_draw :: proc() {
     // Render Camera
     rl.BeginMode2D(camera)
-        for c in world.chunks {
-            world.draw_chunk(c)
+    for cx in -1..=1 {
+        for cy in -1..=1 {
+            world.draw_chunk({entities.plr.cx + i32(cx), entities.plr.cy + i32(cy)})
         }
+    }
         entities.plr_draw()
         entities.draw()
     rl.EndMode2D()
