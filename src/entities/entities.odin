@@ -16,6 +16,8 @@ Entity :: struct {
     y: i32,
     rx: f32,
     ry: f32,
+    cx: i32,
+    cy: i32,
     species: Species,
     data: rawptr
 }
@@ -25,6 +27,8 @@ entities: [dynamic]Entity // The current array of entities
 // Procedures for managing and updating entities
 create :: proc(x: i32, y: i32, species: Species) -> int {
     e := init_procs[species](x, y)
+    e.cx = i32(math.floor(f32(x) / 256))
+    e.cy = i32(math.floor(f32(y) / 256))
     append(&entities, e)
     return len(&entities) // might not be useful. well, better safe than sorry???
 }
@@ -40,7 +44,18 @@ update :: proc(delta: f32) {
     i := 0
     for i < len(entities) {
         e := &entities[i]
+
+        // Exclude entities that aren't in render distance
+        if e.cx < plr.cx -1 || e.cx > plr.cx + 1 || e.cy < plr.cy -1 || e.cy > plr.cy + 1 {
+            i += 1
+            continue
+        }
+
         update_procs[e.species](e, delta) // Run the correct update procedure
+
+        // Update chunk coords
+        e.cx = i32(math.floor(f32(e.x) / 256))
+        e.cy = i32(math.floor(f32(e.y) / 256))
         
         // If the entity dies, free its resources and remove it
         if die_procs[e.species](e) {
