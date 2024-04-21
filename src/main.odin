@@ -19,7 +19,6 @@ main :: proc() {
     rl.SetExitKey(rl.KeyboardKey.KEY_NULL)
     screen_target = rl.LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT)
     rl.SetTargetFPS(60)
-    rl.HideCursor()
 
     // Set up audio
     rl.InitAudioDevice()

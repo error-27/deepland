@@ -1,6 +1,7 @@
 package deepland
 
 import rl "vendor:raylib"
+import "core:math"
 import "entities"
 import "world"
 
@@ -51,17 +52,30 @@ game_update :: proc(delta: f32) {
 game_draw :: proc() {
     // Render Camera
     rl.BeginMode2D(camera)
-    for cx in -1..=1 {
-        for cy in -1..=1 {
-            world.draw_chunk({entities.plr.cx + i32(cx), entities.plr.cy + i32(cy)})
+        for cx in -1..=1 {
+            for cy in -1..=1 {
+                world.draw_chunk({entities.plr.cx + i32(cx), entities.plr.cy + i32(cy)})
+            }
         }
-    }
         entities.plr_draw()
         entities.draw()
+
+        // Draw mouse build preview
+        mpos := get_mouse_pos()
+
+        rl.DrawRectangleLines(mpos[0], mpos[1], 16, 16, rl.WHITE)
+
     rl.EndMode2D()
 }
 
 game_end :: proc() {
     entities.clear_entities()
     world.clear_chunks()
+}
+
+get_mouse_pos :: proc() -> [2]i32 {
+    mpos := rl.GetScreenToWorld2D(rl.GetMousePosition() / UPSCALE, camera)
+    mx := math.floor(mpos[0] / 16) * 16
+    my := math.floor(mpos[1] / 16) * 16
+    return {i32(mx), i32(my)}
 }

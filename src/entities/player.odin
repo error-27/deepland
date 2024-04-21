@@ -24,10 +24,10 @@ plr_init :: proc() {
 }
 
 plr_update :: proc(delta: f32) {
-    left := rl.IsKeyDown(rl.KeyboardKey.LEFT)
-    right := rl.IsKeyDown(rl.KeyboardKey.RIGHT)
-    up := rl.IsKeyDown(rl.KeyboardKey.UP)
-    down := rl.IsKeyDown(rl.KeyboardKey.DOWN)
+    left := rl.IsKeyDown(rl.KeyboardKey.LEFT) || rl.IsKeyDown(rl.KeyboardKey.A)
+    right := rl.IsKeyDown(rl.KeyboardKey.RIGHT) || rl.IsKeyDown(rl.KeyboardKey.D)
+    up := rl.IsKeyDown(rl.KeyboardKey.UP) || rl.IsKeyDown(rl.KeyboardKey.W)
+    down := rl.IsKeyDown(rl.KeyboardKey.DOWN) || rl.IsKeyDown(rl.KeyboardKey.S)
 
     h_dir := cast(i32)right - cast(i32)left
     v_dir := cast(i32)down - cast(i32)up
