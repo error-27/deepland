@@ -27,6 +27,15 @@ game_update :: proc(delta: f32) {
         entities.plr_update(delta)
         entities.update(delta)
         camera.target = {cast(f32)entities.plr.x - SCREEN_WIDTH/2 + 8, cast(f32)entities.plr.y - SCREEN_HEIGHT/2 + 8}
+
+        if rl.IsMouseButtonPressed(rl.MouseButton.LEFT) {
+            mpos := get_mouse_pos()
+            world.place_tile(mpos[0], mpos[1], .TESTTILE)
+        }
+        if rl.IsMouseButtonPressed(rl.MouseButton.RIGHT) {
+            mpos := get_mouse_pos()
+            world.place_tile(mpos[0], mpos[1], .NONE)
+        }
     }
 
     if rl.IsKeyPressed(rl.KeyboardKey.ESCAPE) {
@@ -63,7 +72,7 @@ game_draw :: proc() {
         // Draw mouse build preview
         mpos := get_mouse_pos()
 
-        rl.DrawRectangleLines(mpos[0], mpos[1], 16, 16, rl.WHITE)
+        rl.DrawRectangleLines(mpos[0] * 16, mpos[1] * 16, 16, 16, rl.WHITE)
 
     rl.EndMode2D()
 }
@@ -73,9 +82,10 @@ game_end :: proc() {
     world.clear_chunks()
 }
 
+// Gets tile coords of the mouse (each tile is 16 pixels, so multiply by 16 to get real coords)
 get_mouse_pos :: proc() -> [2]i32 {
     mpos := rl.GetScreenToWorld2D(rl.GetMousePosition() / UPSCALE, camera)
-    mx := math.floor(mpos[0] / 16) * 16
-    my := math.floor(mpos[1] / 16) * 16
+    mx := math.floor(mpos[0] / 16)
+    my := math.floor(mpos[1] / 16)
     return {i32(mx), i32(my)}
 }

@@ -1,6 +1,7 @@
 package world
 
 import rl "vendor:raylib"
+import "core:math"
 
 NOISE_SCALE :: 2
 THRESHOLD :: 128
@@ -31,6 +32,7 @@ chunks: map[[2]i32]Chunk
 
 init_chunks :: proc() {
     generate_chunk(0, 0)
+    place_tile(3, 6, .TESTTILE)
 }
 
 generate_chunk :: proc(x: i32, y: i32) {
@@ -62,10 +64,36 @@ draw_chunk :: proc(coord: [2]i32) {
                 case .GRASS:
                     rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, rl.GREEN)
             }
+
+            #partial switch c.tiles[x][y].type {
+                case .TESTTILE:
+                    rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, rl.RED)
+            }
         }
     }
 }
 
 clear_chunks :: proc() {
     clear(&chunks)
+}
+
+place_tile :: proc(x: i32, y: i32, tile: TileType) {
+    chunk_x := i32(math.floor(f32(x) / 16))
+    chunk_y := i32(math.floor(f32(y) / 16))
+
+    c := &chunks[{chunk_x, chunk_y}]
+    t := Tile{}
+    t.type = tile
+
+    tx := x % 16
+    ty := y % 16
+
+    if tx < 0 {
+        tx = 16 + tx
+    }
+    if ty < 0 {
+        ty = 16 + ty
+    }
+
+    c.tiles[tx][ty] = t
 }
