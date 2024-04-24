@@ -95,5 +95,25 @@ place_tile :: proc(x: i32, y: i32, tile: TileType) {
         ty = 16 + ty
     }
 
+    if c.tiles[tx][ty].type != .NONE {
+        return
+    }
+
     c.tiles[tx][ty] = t
+}
+
+damage_tile :: proc(x: i32, y: i32) {
+    chunk_x := i32(math.floor(f32(x) / 16))
+    chunk_y := i32(math.floor(f32(y) / 16))
+
+    c := &chunks[{chunk_x, chunk_y}]
+
+    tx := x % 16
+    ty := y % 16
+
+    c.tiles[tx][ty].state += 1
+
+    if c.tiles[tx][ty].state == 5 {
+        c.tiles[tx][ty] = Tile{.NONE, 0}
+    }
 }

@@ -34,7 +34,7 @@ game_update :: proc(delta: f32) {
         }
         if rl.IsMouseButtonPressed(rl.MouseButton.RIGHT) {
             mpos := get_mouse_pos()
-            world.place_tile(mpos[0], mpos[1], .NONE)
+            world.damage_tile(mpos[0], mpos[1])
         }
     }
 
