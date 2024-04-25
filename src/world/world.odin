@@ -2,6 +2,7 @@ package world
 
 import rl "vendor:raylib"
 import "core:math"
+import "core:fmt"
 
 NOISE_SCALE :: 2
 THRESHOLD :: 128
@@ -71,6 +72,8 @@ draw_chunk :: proc(coord: [2]i32) {
             }
         }
     }
+    rl.DrawLine(coord[0] * 256, coord[1] * 256, (coord[0] + 1) * 256, coord[1] * 256, rl.RAYWHITE)
+    rl.DrawLine(coord[0] * 256, coord[1] * 256, coord[0] * 256, (coord[1] + 1) * 256, rl.RAYWHITE)
 }
 
 clear_chunks :: proc() {
@@ -116,4 +119,63 @@ damage_tile :: proc(x: i32, y: i32) {
     if c.tiles[tx][ty].state == 5 {
         c.tiles[tx][ty] = Tile{.NONE, 0}
     }
+}
+
+get_collisions :: proc(rect: rl.Rectangle) -> bool {
+    // Because I don't like the idea of copying entire chunks in memory every frame I'm going to go by index here
+    to_check: [4][2]i32
+    chk_flags: [4]bool
+
+    base_chunk_x := i32(math.floor(rect.x / 256))
+    base_chunk_y := i32(math.floor(rect.y / 256))
+    chk_flags[0] = true
+
+    // Chunk at coordinate
+    to_check[0] = {base_chunk_x, base_chunk_y}
+
+    // if it extends horizontally into a neighboring chunk, add that chunk
+    if i32(math.floor((rect.x + rect.width) / 256)) != base_chunk_x {
+        to_check[1] = {i32(math.floor((rect.x + rect.width) / 256)), base_chunk_y}
+        chk_flags[1] = true
+    }
+
+    // if it extends vertically into a neighboring chunk, add that chunk
+    if i32(math.floor((rect.y + rect.height) / 256)) != base_chunk_y {
+        to_check[2] = {base_chunk_x, i32(math.floor((rect.y + rect.height) / 256))}
+        chk_flags[2] = true
+    }
+
+    // if it extends both ways, it's at a corner and we need a 4th chunk
+    if chk_flags[1] && chk_flags[2] {
+        to_check[3] = {to_check[1][0], to_check[2][1]}
+        chk_flags[3] = true
+    }
+
+    for v, i in to_check {
+        if !chk_flags[i] {
+            continue
+        }
+
+        for x in 0..<16 {
+            for y in 0..<16 {
+                t := chunks[v].tiles[x][y]
+                if t.type == .NONE {
+                    continue
+                }
+
+                real_x := v[0] * 256 + i32(x) * 16 // Chunk x * 256 pixels + tile x * 16 pixels
+                real_y := v[1] * 256 + i32(y) * 16
+
+                res := rl.CheckCollisionRecs(rect, {f32(real_x), f32(real_y), 16, 16})
+
+                if !res {
+                    continue
+                }
+                
+                return true
+            }
+        }
+    }
+
+    return false
 }

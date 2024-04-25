@@ -42,3 +42,7 @@ plr_update :: proc(delta: f32) {
 plr_draw :: proc() {
     rl.DrawRectangle(plr.x, plr.y, PLR_SIZE, PLR_SIZE, rl.ORANGE)
 }
+
+plr_get_rectangle :: proc() -> rl.Rectangle {
+    return {f32(plr.x) + plr.rx, f32(plr.y) + plr.ry, 16, 16}
+}
