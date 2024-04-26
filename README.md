@@ -9,3 +9,6 @@ You just need to use `odin` to build/run the `src` directory. I tend to use a bu
 `odin run src --out:build/deepland`
 
 The `.gitignore` is already set up to ignore this directory, so I'd recommend using that if you want to avoid having to clean up built executables.
+
+## Contribution
+I am **NOT** accepting contributions at the moment. This is just a project for me to learn from right now. If it gets to a more finished state, I may start accepting PRs. Even if I am not accepting PRs, feel free to fork the project and mess around with it yourself though.
