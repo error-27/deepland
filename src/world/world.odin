@@ -68,7 +68,7 @@ draw_chunk :: proc(coord: [2]i32) {
 
             #partial switch c.tiles[x][y].type {
                 case .TESTTILE:
-                    rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, rl.RED)
+                    rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, {255 - (c.tiles[x][y].state) * 20, 0, 0, 255})
             }
         }
     }
