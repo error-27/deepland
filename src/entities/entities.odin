@@ -3,6 +3,7 @@ package entities
 import rl "vendor:raylib"
 import "core:math"
 import "core:fmt"
+import "../world"
 
 // Contains all entity species, should be updated with each addition
 Species :: enum {
@@ -76,24 +77,42 @@ draw :: proc() {
 
 // Utility procedures for moving entities
 // TODO: Move these somewhere better?
-moveX :: proc(x: ^i32, rx: ^f32, speed: f32, delta: f32) {
+moveX :: proc(coord: [2]^i32, rx: ^f32, speed: f32, delta: f32) {
+    x := coord[0]
+    y := coord[1]
     rx^ += speed * delta
     movex := math.round_f32(rx^)
     if movex != 0 {
         rx^ -= movex
         sign := math.sign(movex)
-        //TODO: Write pixel-by-pixel collision
-        x^ += cast(i32)movex
+        for movex != 0 {
+            rect := rl.Rectangle{f32(x^) + sign, f32(y^), 16, 16}
+            if !world.get_collisions(rect) {
+                x^ += i32(sign)
+                movex -= sign
+            } else {
+                break
+            }
+        }
     }
 }
 
-moveY :: proc(y: ^i32, ry: ^f32, speed: f32, delta: f32) {
+moveY :: proc(coord: [2]^i32, ry: ^f32, speed: f32, delta: f32) {
+    x := coord[0]
+    y := coord[1]
     ry^ += speed * delta
     movey := math.round_f32(ry^)
     if movey != 0 {
         ry^ -= movey
         sign := math.sign(movey)
-        //TODO: Write pixel-by-pixel collision
-        y^ += cast(i32)movey
+        for movey != 0 {
+            rect := rl.Rectangle{f32(x^), f32(y^) + sign, 16, 16}
+            if !world.get_collisions(rect) {
+                y^ += i32(sign)
+                movey -= sign
+            } else {
+                break
+            }
+        }
     }
 }
