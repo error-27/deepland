@@ -4,8 +4,7 @@ import rl "vendor:raylib"
 import "core:math"
 import "entities"
 import "world"
-
-camera: rl.Camera2D
+import "globals"
 
 @(private="file")
 paused := false
@@ -13,6 +12,7 @@ paused := false
 game_init :: proc() {
     entities.plr_init()
 
+    using globals
     camera = rl.Camera2D{0,0,0,0} // initialize a default camera
     camera.zoom = 1
 
@@ -26,16 +26,7 @@ game_update :: proc(delta: f32) {
     if !paused {
         entities.plr_update(delta)
         entities.update(delta)
-        camera.target = {cast(f32)entities.plr.x - SCREEN_WIDTH/2 + 8, cast(f32)entities.plr.y - SCREEN_HEIGHT/2 + 8}
-
-        if rl.IsMouseButtonPressed(rl.MouseButton.LEFT) {
-            mpos := get_mouse_pos()
-            world.place_tile(mpos[0], mpos[1], .TESTTILE)
-        }
-        if rl.IsMouseButtonPressed(rl.MouseButton.RIGHT) {
-            mpos := get_mouse_pos()
-            world.damage_tile(mpos[0], mpos[1])
-        }
+        globals.camera.target = {cast(f32)entities.plr.x - SCREEN_WIDTH/2 + 8, cast(f32)entities.plr.y - SCREEN_HEIGHT/2 + 8}
     }
 
     if rl.IsKeyPressed(rl.KeyboardKey.ESCAPE) {
@@ -60,7 +51,7 @@ game_update :: proc(delta: f32) {
 
 game_draw :: proc() {
     // Render Camera
-    rl.BeginMode2D(camera)
+    rl.BeginMode2D(globals.camera)
         for cx in -1..=1 {
             for cy in -1..=1 {
                 world.draw_chunk({entities.plr.cx + i32(cx), entities.plr.cy + i32(cy)})
@@ -70,7 +61,7 @@ game_draw :: proc() {
         entities.draw()
 
         // Draw mouse build preview
-        mpos := get_mouse_pos()
+        mpos := world.get_mouse_pos()
 
         rl.DrawRectangleLines(mpos[0] * 16, mpos[1] * 16, 16, 16, rl.WHITE)
 
@@ -80,12 +71,4 @@ game_draw :: proc() {
 game_end :: proc() {
     entities.clear_entities()
     world.clear_chunks()
-}
-
-// Gets tile coords of the mouse (each tile is 16 pixels, so multiply by 16 to get real coords)
-get_mouse_pos :: proc() -> [2]i32 {
-    mpos := rl.GetScreenToWorld2D(rl.GetMousePosition() / UPSCALE, camera)
-    mx := math.floor(mpos[0] / 16)
-    my := math.floor(mpos[1] / 16)
-    return {i32(mx), i32(my)}
 }

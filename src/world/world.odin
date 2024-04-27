@@ -3,6 +3,7 @@ package world
 import rl "vendor:raylib"
 import "core:math"
 import "core:fmt"
+import "../globals"
 
 NOISE_SCALE :: 2
 THRESHOLD :: 128
@@ -178,4 +179,12 @@ get_collisions :: proc(rect: rl.Rectangle) -> bool {
     }
 
     return false
+}
+
+// Gets tile coords of the mouse (each tile is 16 pixels, so multiply by 16 to get real coords)
+get_mouse_pos :: proc() -> [2]i32 {
+    mpos := rl.GetScreenToWorld2D(rl.GetMousePosition() / globals.UPSCALE, globals.camera)
+    mx := math.floor(mpos[0] / 16)
+    my := math.floor(mpos[1] / 16)
+    return {i32(mx), i32(my)}
 }

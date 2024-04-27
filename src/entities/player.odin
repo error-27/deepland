@@ -3,6 +3,7 @@ package entities
 import rl "vendor:raylib"
 import "core:fmt"
 import "core:math"
+import "../world"
 
 PLR_SIZE :: 16
 PLR_SPEED :: 100
@@ -14,16 +15,40 @@ Player :: struct {
     ry: f32,
     dir: Direction,
     cx: i32, // Chunk Position
-    cy: i32
+    cy: i32,
+
+    health: u8,
+    inventory: [20]ItemStack
+}
+
+ItemType :: enum {
+    NONE,
+    BLOCK,
+}
+
+ItemStack :: struct {
+    type: ItemType,
+    amount: u8
 }
 
 plr: Player
 
 plr_init :: proc() {
     plr = Player{}
+    plr.inventory[0] = {.BLOCK, 14}
+    plr.health = 10
 }
 
 plr_update :: proc(delta: f32) {
+    if rl.IsMouseButtonPressed(rl.MouseButton.LEFT) {
+        mpos := world.get_mouse_pos()
+        world.place_tile(mpos[0], mpos[1], .TESTTILE)
+    }
+    if rl.IsMouseButtonPressed(rl.MouseButton.RIGHT) {
+        mpos := world.get_mouse_pos()
+        world.damage_tile(mpos[0], mpos[1])
+    }
+
     left := rl.IsKeyDown(rl.KeyboardKey.LEFT) || rl.IsKeyDown(rl.KeyboardKey.A)
     right := rl.IsKeyDown(rl.KeyboardKey.RIGHT) || rl.IsKeyDown(rl.KeyboardKey.D)
     up := rl.IsKeyDown(rl.KeyboardKey.UP) || rl.IsKeyDown(rl.KeyboardKey.W)

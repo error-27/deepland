@@ -2,14 +2,13 @@ package deepland
 
 import rl "vendor:raylib"
 import "core:fmt"
+import "globals"
 
 SCREEN_WIDTH :: 320
 SCREEN_HEIGHT :: 192
 
-UPSCALE :: 3
-
-WINDOW_WIDTH :: SCREEN_WIDTH * UPSCALE
-WINDOW_HEIGHT :: SCREEN_HEIGHT * UPSCALE
+WINDOW_WIDTH :: SCREEN_WIDTH * globals.UPSCALE
+WINDOW_HEIGHT :: SCREEN_HEIGHT * globals.UPSCALE
 
 screen_target: rl.RenderTexture2D
 
