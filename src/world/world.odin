@@ -69,7 +69,7 @@ draw_chunk :: proc(coord: [2]i32) {
 
             #partial switch c.tiles[x][y].type {
                 case .TESTTILE:
-                    rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, {255 - (c.tiles[x][y].state) * 20, 0, 0, 255})
+                    rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, {255 - (c.tiles[x][y].state), 0, 0, 255})
             }
         }
     }
@@ -117,7 +117,7 @@ damage_tile :: proc(x: i32, y: i32) {
 
     c.tiles[tx][ty].state += 1
 
-    if c.tiles[tx][ty].state == 5 {
+    if c.tiles[tx][ty].state == 60 {
         c.tiles[tx][ty] = Tile{.NONE, 0}
     }
 }
