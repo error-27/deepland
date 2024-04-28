@@ -18,7 +18,8 @@ Player :: struct {
     cy: i32,
 
     health: u8,
-    inventory: [20]ItemStack
+    inventory: [20]ItemStack,
+    inv_select: u8
 }
 
 ItemType :: enum {
@@ -37,18 +38,38 @@ plr_init :: proc() {
     plr = Player{}
     plr.inventory[0] = {.BLOCK, 14}
     plr.health = 10
+    plr.inv_select = 0
 }
 
 plr_update :: proc(delta: f32) {
-    if rl.IsMouseButtonDown(rl.MouseButton.LEFT) {
+    if rl.IsMouseButtonDown(rl.MouseButton.LEFT) && plr.inventory[plr.inv_select].amount > 0 {
         mpos := world.get_mouse_pos()
         if !rl.CheckCollisionRecs(plr_get_rectangle(), {f32(mpos[0]) * 16, f32(mpos[1]) * 16, 16, 16}) {
-            world.place_tile(mpos[0], mpos[1], .TESTTILE)
+            result := world.place_tile(mpos[0], mpos[1], .TESTTILE)
+            if result {
+                plr.inventory[plr.inv_select].amount -= 1
+            }
         }
     }
     if rl.IsMouseButtonDown(rl.MouseButton.RIGHT) {
         mpos := world.get_mouse_pos()
         world.damage_tile(mpos[0], mpos[1])
+    }
+
+    mouse_move := rl.GetMouseWheelMove()
+
+    if mouse_move > 0 {
+        plr.inv_select += 1
+
+        if plr.inv_select >= len(plr.inventory) {
+            plr.inv_select = 0
+        }
+    }else if mouse_move < 0 {
+        if plr.inv_select == 0 {
+            plr.inv_select = len(plr.inventory) - 1
+        } else {
+            plr.inv_select -= 1
+        }
     }
 
     left := rl.IsKeyDown(rl.KeyboardKey.LEFT) || rl.IsKeyDown(rl.KeyboardKey.A)

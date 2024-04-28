@@ -81,7 +81,8 @@ clear_chunks :: proc() {
     clear(&chunks)
 }
 
-place_tile :: proc(x: i32, y: i32, tile: TileType) {
+// Returns false when a place fails, returns true when it succeeds
+place_tile :: proc(x: i32, y: i32, tile: TileType) -> bool {
     chunk_x := i32(math.floor(f32(x) / 16))
     chunk_y := i32(math.floor(f32(y) / 16))
 
@@ -100,10 +101,11 @@ place_tile :: proc(x: i32, y: i32, tile: TileType) {
     }
 
     if c.tiles[tx][ty].type != .NONE {
-        return
+        return false
     }
 
     c.tiles[tx][ty] = t
+    return true
 }
 
 damage_tile :: proc(x: i32, y: i32) {

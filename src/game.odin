@@ -2,6 +2,8 @@ package deepland
 
 import rl "vendor:raylib"
 import "core:math"
+import "core:strconv"
+import "core:strings"
 import "entities"
 import "world"
 import "globals"
@@ -66,6 +68,10 @@ game_draw :: proc() {
         rl.DrawRectangleLines(mpos[0] * 16, mpos[1] * 16, 16, 16, rl.WHITE)
 
     rl.EndMode2D()
+
+    buf: [3]byte
+    selection_str := strconv.itoa(buf[:], int(entities.plr.inv_select))
+    rl.DrawText(strings.clone_to_cstring(selection_str), 10, 40, 20, rl.BLUE)
 }
 
 game_end :: proc() {
