@@ -42,7 +42,9 @@ plr_init :: proc() {
 plr_update :: proc(delta: f32) {
     if rl.IsMouseButtonDown(rl.MouseButton.LEFT) {
         mpos := world.get_mouse_pos()
-        world.place_tile(mpos[0], mpos[1], .TESTTILE)
+        if !rl.CheckCollisionRecs(plr_get_rectangle(), {f32(mpos[0]) * 16, f32(mpos[1]) * 16, 16, 16}) {
+            world.place_tile(mpos[0], mpos[1], .TESTTILE)
+        }
     }
     if rl.IsMouseButtonDown(rl.MouseButton.RIGHT) {
         mpos := world.get_mouse_pos()
