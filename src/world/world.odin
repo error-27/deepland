@@ -122,6 +122,13 @@ damage_tile :: proc(x: i32, y: i32) {
     tx := x % 16
     ty := y % 16
 
+    if tx < 0 {
+        tx = 16 + tx
+    }
+    if ty < 0 {
+        ty = 16 + ty
+    }
+
     c.tiles[tx][ty].state += 1
 
     if c.tiles[tx][ty].state == 30 {
