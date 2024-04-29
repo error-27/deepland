@@ -1,4 +1,4 @@
-package entities
+package world
 
 import rl "vendor:raylib"
 import "core:fmt"

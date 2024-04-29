@@ -4,7 +4,6 @@ import rl "vendor:raylib"
 import "core:math"
 import "core:strconv"
 import "core:strings"
-import "entities"
 import "world"
 import "globals"
 
@@ -12,23 +11,23 @@ import "globals"
 paused := false
 
 game_init :: proc() {
-    entities.plr_init()
+    world.plr_init()
 
     using globals
     camera = rl.Camera2D{0,0,0,0} // initialize a default camera
     camera.zoom = 1
 
-    camera.target = {cast(f32)entities.plr.x - SCREEN_WIDTH/2 + 8, cast(f32)entities.plr.y - SCREEN_HEIGHT/2 + 8}
+    camera.target = {cast(f32)world.plr.x - SCREEN_WIDTH/2 + 8, cast(f32)world.plr.y - SCREEN_HEIGHT/2 + 8}
 
     world.init_chunks()
-    entities.create(10, 10, .TestObj)
+    world.create_entity(10, 10, .TestObj)
 }
 
 game_update :: proc(delta: f32) {
     if !paused {
-        entities.plr_update(delta)
-        entities.update(delta)
-        globals.camera.target = {cast(f32)entities.plr.x - SCREEN_WIDTH/2 + 8, cast(f32)entities.plr.y - SCREEN_HEIGHT/2 + 8}
+        world.plr_update(delta)
+        world.entities_update(delta)
+        globals.camera.target = {cast(f32)world.plr.x - SCREEN_WIDTH/2 + 8, cast(f32)world.plr.y - SCREEN_HEIGHT/2 + 8}
     }
 
     if rl.IsKeyPressed(rl.KeyboardKey.ESCAPE) {
@@ -44,8 +43,8 @@ game_update :: proc(delta: f32) {
     // This is done in a 3x3 shape around the player
     for cx in -1..=1 {
         for cy in -1..=1 {
-            if !({entities.plr.cx + i32(cx), entities.plr.cy + i32(cy)} in world.chunks) {
-                world.generate_chunk(entities.plr.cx + i32(cx), entities.plr.cy + i32(cy))
+            if !({world.plr.cx + i32(cx), world.plr.cy + i32(cy)} in world.chunks) {
+                world.generate_chunk(world.plr.cx + i32(cx), world.plr.cy + i32(cy))
             }
         }
     }
@@ -56,11 +55,11 @@ game_draw :: proc() {
     rl.BeginMode2D(globals.camera)
         for cx in -1..=1 {
             for cy in -1..=1 {
-                world.draw_chunk({entities.plr.cx + i32(cx), entities.plr.cy + i32(cy)})
+                world.draw_chunk({world.plr.cx + i32(cx), world.plr.cy + i32(cy)})
             }
         }
-        entities.plr_draw()
-        entities.draw()
+        world.plr_draw()
+        world.entities_draw()
 
         // Draw mouse build preview
         mpos := world.get_mouse_pos()
@@ -70,11 +69,11 @@ game_draw :: proc() {
     rl.EndMode2D()
 
     buf: [3]byte
-    selection_str := strconv.itoa(buf[:], int(entities.plr.inv_select))
+    selection_str := strconv.itoa(buf[:], int(world.plr.inv_select))
     rl.DrawText(strings.clone_to_cstring(selection_str), 10, 40, 20, rl.BLUE)
 }
 
 game_end :: proc() {
-    entities.clear_entities()
+    world.clear_entities()
     world.clear_chunks()
 }

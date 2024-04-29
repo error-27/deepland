@@ -1,9 +1,8 @@
-package entities
+package world
 
 import rl "vendor:raylib"
 import "core:math"
 import "core:fmt"
-import "../world"
 
 // Contains all entity species, should be updated with each addition
 Species :: enum {
@@ -27,7 +26,7 @@ Entity :: struct {
 entities: [dynamic]Entity // The current array of entities
 
 // Procedures for managing and updating entities
-create :: proc(x: i32, y: i32, species: Species) -> int {
+create_entity :: proc(x: i32, y: i32, species: Species) -> int {
     e := init_procs[species](x, y)
     e.cx = i32(math.floor(f32(x) / 256))
     e.cy = i32(math.floor(f32(y) / 256))
@@ -36,7 +35,7 @@ create :: proc(x: i32, y: i32, species: Species) -> int {
 }
 
 create_item :: proc(x: i32, y: i32, type: ItemType) {
-    i := create(x, y, .Item)
+    i := create_entity(x, y, .Item)
     data := cast(^ItemData)entities[i].data
     data.type = type
 }
@@ -48,7 +47,7 @@ clear_entities :: proc() {
     clear(&entities)
 }
 
-update :: proc(delta: f32) {
+entities_update :: proc(delta: f32) {
     i := 0
     for i < len(entities) {
         e := &entities[i]
@@ -75,7 +74,7 @@ update :: proc(delta: f32) {
     }
 }
 
-draw :: proc() {
+entities_draw :: proc() {
     for i in 0..<len(entities) {
         e := &entities[i]
         draw_procs[e.species](e)
@@ -94,7 +93,7 @@ moveX :: proc(coord: [2]^i32, rx: ^f32, speed: f32, delta: f32) {
         sign := math.sign(movex)
         for movex != 0 {
             rect := rl.Rectangle{f32(x^) + sign, f32(y^), 16, 16}
-            if !world.get_collisions(rect) {
+            if !get_collisions(rect) {
                 x^ += i32(sign)
                 movex -= sign
             } else {
@@ -114,7 +113,7 @@ moveY :: proc(coord: [2]^i32, ry: ^f32, speed: f32, delta: f32) {
         sign := math.sign(movey)
         for movey != 0 {
             rect := rl.Rectangle{f32(x^), f32(y^) + sign, 16, 16}
-            if !world.get_collisions(rect) {
+            if !get_collisions(rect) {
                 y^ += i32(sign)
                 movey -= sign
             } else {
