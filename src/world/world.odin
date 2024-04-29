@@ -32,6 +32,11 @@ Chunk :: struct {
 
 chunks: map[[2]i32]Chunk
 
+// Air should never break, right?? Well if it does something else is seriously wrong
+block_drops := #partial [TileType]ItemStack {
+    .TESTTILE = ItemStack{.BLOCK, 1}
+}
+
 init_chunks :: proc() {
     generate_chunk(0, 0)
     place_tile(3, 6, .TESTTILE)
@@ -120,8 +125,11 @@ damage_tile :: proc(x: i32, y: i32) {
     c.tiles[tx][ty].state += 1
 
     if c.tiles[tx][ty].state == 30 {
+        drops := block_drops[c.tiles[tx][ty].type]
+        for i in 0..<drops.amount {
+            create_item(x * 16, y * 16, drops.type)
+        }
         c.tiles[tx][ty] = Tile{.NONE, 0}
-        create_item(x * 16, y * 16, .BLOCK)
     }
 }
 
