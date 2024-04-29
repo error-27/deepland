@@ -54,7 +54,13 @@ item_update :: proc(me: ^Entity, delta: f32) {
 
 @(private="file")
 item_draw :: proc(me: ^Entity) {
-    rl.DrawCircle(me.x, me.y, 3, rl.RED)
+    data := cast(^ItemData)me.data
+    switch data.type {
+        case .NONE:
+            rl.DrawCircle(me.x, me.y, 3, rl.MAGENTA)
+        case .BLOCK:
+            rl.DrawRectangle(me.x, me.y, 6, 6, rl.RED)
+    }
 }
 
 @(private="file")
@@ -126,7 +132,7 @@ frog_die :: proc(me: ^Entity) -> bool {
 
 ItemData :: struct {
     type: ItemType,
-    age: u32
+    age: u32 // potentially kill items after a certain age? maybe i'll go with the infinite life approach tho. idk
 }
 
 EntityData :: struct {
