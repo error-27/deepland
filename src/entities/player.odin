@@ -22,11 +22,6 @@ Player :: struct {
     inv_select: u8
 }
 
-ItemType :: enum {
-    NONE,
-    BLOCK,
-}
-
 ItemStack :: struct {
     type: ItemType,
     amount: u8

@@ -5,21 +5,25 @@ import "core:fmt"
 
 // Lists of entity procedures
 init_procs := [Species]proc(x: i32, y: i32) -> Entity {
+    .Item = item_init,
     .TestObj = testobj_init,
     .Frog = frog_init
 }
 
 update_procs := [Species]proc(me: ^Entity, delta: f32) {
+    .Item = item_update,
     .TestObj = testobj_update,
     .Frog = frog_update
 }
 
 draw_procs := [Species]proc(me: ^Entity) {
+    .Item = item_draw,
     .TestObj = testobj_draw,
     .Frog = frog_draw
 }
 
 die_procs := [Species]proc(me: ^Entity) -> bool {
+    .Item = item_die,
     .TestObj = testobj_die,
     .Frog = frog_die
 }
@@ -27,6 +31,36 @@ die_procs := [Species]proc(me: ^Entity) -> bool {
 // ====================
 // ENTITY BEHAVIOR DEFS
 // ====================
+
+// ----------------- ITEM -----------------
+@(private="file")
+item_init :: proc(x: i32, y: i32) -> Entity {
+    edata := new(ItemData)
+    edata.type = .BLOCK
+
+    e := Entity{}
+    e.x = x
+    e.y = y
+    e.species = .Item
+    e.data = rawptr(edata)
+    return e
+}
+
+@(private="file")
+item_update :: proc(me: ^Entity, delta: f32) {
+    data := cast(^ItemData)me.data
+    data.age += 1
+}
+
+@(private="file")
+item_draw :: proc(me: ^Entity) {
+    rl.DrawCircle(me.x, me.y, 3, rl.RED)
+}
+
+@(private="file")
+item_die :: proc(me: ^Entity) -> bool {
+    return false
+}
 
 // ----------------- TESTOBJ -----------------
 @(private="file")
@@ -90,6 +124,11 @@ frog_die :: proc(me: ^Entity) -> bool {
 // TYPE DEFS
 // ====================
 
+ItemData :: struct {
+    type: ItemType,
+    age: u32
+}
+
 EntityData :: struct {
 
 }
@@ -99,6 +138,11 @@ Direction :: enum {
     Right,
     Down,
     Left
+}
+
+ItemType :: enum {
+    NONE,
+    BLOCK,
 }
 
 FrogData :: struct {

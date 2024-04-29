@@ -7,6 +7,7 @@ import "../world"
 
 // Contains all entity species, should be updated with each addition
 Species :: enum {
+    Item,
     TestObj,
     Frog
 }
@@ -32,6 +33,12 @@ create :: proc(x: i32, y: i32, species: Species) -> int {
     e.cy = i32(math.floor(f32(y) / 256))
     append(&entities, e)
     return len(&entities) // might not be useful. well, better safe than sorry???
+}
+
+create_item :: proc(x: i32, y: i32, type: ItemType) {
+    i := create(x, y, .Item)
+    data := cast(^ItemData)entities[i].data
+    data.type = type
 }
 
 clear_entities :: proc() {
