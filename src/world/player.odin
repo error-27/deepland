@@ -101,7 +101,7 @@ plr_move_x :: proc(me: ^Player, speed: f32, delta: f32) {
         sign := math.sign(movex)
         for movex != 0 {
             rect := rl.Rectangle{f32(me.x) + sign, f32(me.y), 16, 16}
-            if !get_collisions(rect) {
+            if !is_tile_colliding(rect) {
                 me.x += i32(sign)
                 movex -= sign
             } else {
@@ -120,7 +120,7 @@ plr_move_y :: proc(me: ^Player, speed: f32, delta: f32) {
         sign := math.sign(movey)
         for movey != 0 {
             rect := rl.Rectangle{f32(me.x), f32(me.y) + sign, 16, 16}
-            if !get_collisions(rect) {
+            if !is_tile_colliding(rect) {
                 me.y += i32(sign)
                 movey -= sign
             } else {

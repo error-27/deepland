@@ -84,8 +84,33 @@ entities_draw :: proc() {
     }
 }
 
+is_entity_colliding :: proc{is_entity_colliding_entity, is_entity_colliding_rect}
+
+is_entity_colliding_entity :: proc(me: ^Entity) -> bool {
+    rect := rl.Rectangle{f32(me.x), f32(me.y), f32(me.hitbox_size), f32(me.hitbox_size)}
+
+    for i in 0..<len(entities) {
+        if &entities[i] == me {
+            continue // skip itself in the entity list
+        }
+        
+        if rl.CheckCollisionRecs(rect, {f32(entities[i].x), f32(entities[i].y), f32(entities[i].hitbox_size), f32(entities[i].hitbox_size)}) {
+            return true
+        }
+    }
+    return false
+}
+
+is_entity_colliding_rect :: proc(rect: rl.Rectangle) -> bool {
+    for e in entities {
+        if rl.CheckCollisionRecs(rect, {f32(e.x), f32(e.y), f32(e.hitbox_size), f32(e.hitbox_size)}) {
+            return true
+        }
+    }
+    return false
+}
+
 // Utility procedures for moving entities
-// TODO: Move these somewhere better?
 move_x :: proc(me: ^Entity, speed: f32, delta: f32) {
     me.rx += speed * delta
     movex := math.round_f32(me.rx)
@@ -94,7 +119,7 @@ move_x :: proc(me: ^Entity, speed: f32, delta: f32) {
         sign := math.sign(movex)
         for movex != 0 {
             rect := rl.Rectangle{f32(me.x) + sign, f32(me.y), f32(me.hitbox_size), f32(me.hitbox_size)}
-            if !get_collisions(rect) {
+            if !is_tile_colliding(rect) {
                 me.x += i32(sign)
                 movex -= sign
             } else {
@@ -112,7 +137,7 @@ move_y :: proc(me: ^Entity, speed: f32, delta: f32) {
         sign := math.sign(movey)
         for movey != 0 {
             rect := rl.Rectangle{f32(me.x), f32(me.y) + sign, f32(me.hitbox_size), f32(me.hitbox_size)}
-            if !get_collisions(rect) {
+            if !is_tile_colliding(rect) {
                 me.y += i32(sign)
                 movey -= sign
             } else {

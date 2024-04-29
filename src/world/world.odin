@@ -140,7 +140,7 @@ damage_tile :: proc(x: i32, y: i32) {
     }
 }
 
-get_collisions :: proc(rect: rl.Rectangle) -> bool {
+is_tile_colliding :: proc(rect: rl.Rectangle) -> bool {
     // Because I don't like the idea of copying entire chunks in memory every frame I'm going to go by index here
     to_check: [4][2]i32
     chk_flags: [4]bool
