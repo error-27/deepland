@@ -76,8 +76,8 @@ plr_update :: proc(delta: f32) {
     h_dir := cast(i32)right - cast(i32)left
     v_dir := cast(i32)down - cast(i32)up
 
-    move_x({&plr.x, &plr.y}, &plr.rx, cast(f32)h_dir * cast(f32)PLR_SPEED, delta)
-    move_y({&plr.x, &plr.y}, &plr.ry, cast(f32)v_dir * cast(f32)PLR_SPEED, delta)
+    plr_move_x(&plr, cast(f32)h_dir * cast(f32)PLR_SPEED, delta)
+    plr_move_y(&plr, cast(f32)v_dir * cast(f32)PLR_SPEED, delta)
 
     plr.cx = i32(math.floor(f32(plr.x) / 256))
     plr.cy = i32(math.floor(f32(plr.y) / 256))
@@ -89,4 +89,43 @@ plr_draw :: proc() {
 
 plr_get_rectangle :: proc() -> rl.Rectangle {
     return {f32(plr.x) + plr.rx, f32(plr.y) + plr.ry, 16, 16}
+}
+
+// For now these are copied directly from entity movement. may have differences later
+@(private="file")
+plr_move_x :: proc(me: ^Player, speed: f32, delta: f32) {
+    me.rx += speed * delta
+    movex := math.round_f32(me.rx)
+    if movex != 0 {
+        me.rx -= movex
+        sign := math.sign(movex)
+        for movex != 0 {
+            rect := rl.Rectangle{f32(me.x) + sign, f32(me.y), 16, 16}
+            if !get_collisions(rect) {
+                me.x += i32(sign)
+                movex -= sign
+            } else {
+                break
+            }
+        }
+    }
+}
+
+@(private="file")
+plr_move_y :: proc(me: ^Player, speed: f32, delta: f32) {
+    me.ry += speed * delta
+    movey := math.round_f32(me.ry)
+    if movey != 0 {
+        me.ry -= movey
+        sign := math.sign(movey)
+        for movey != 0 {
+            rect := rl.Rectangle{f32(me.x), f32(me.y) + sign, 16, 16}
+            if !get_collisions(rect) {
+                me.y += i32(sign)
+                movey -= sign
+            } else {
+                break
+            }
+        }
+    }
 }

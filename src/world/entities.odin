@@ -20,7 +20,8 @@ Entity :: struct {
     cx: i32,
     cy: i32,
     species: Species,
-    data: rawptr
+    data: rawptr,
+    hitbox_size: u32
 }
 
 entities: [dynamic]Entity // The current array of entities
@@ -85,18 +86,16 @@ entities_draw :: proc() {
 
 // Utility procedures for moving entities
 // TODO: Move these somewhere better?
-move_x :: proc(coord: [2]^i32, rx: ^f32, speed: f32, delta: f32) {
-    x := coord[0]
-    y := coord[1]
-    rx^ += speed * delta
-    movex := math.round_f32(rx^)
+move_x :: proc(me: ^Entity, speed: f32, delta: f32) {
+    me.rx += speed * delta
+    movex := math.round_f32(me.rx)
     if movex != 0 {
-        rx^ -= movex
+        me.rx -= movex
         sign := math.sign(movex)
         for movex != 0 {
-            rect := rl.Rectangle{f32(x^) + sign, f32(y^), 16, 16}
+            rect := rl.Rectangle{f32(me.x) + sign, f32(me.y), f32(me.hitbox_size), f32(me.hitbox_size)}
             if !get_collisions(rect) {
-                x^ += i32(sign)
+                me.x += i32(sign)
                 movex -= sign
             } else {
                 break
@@ -105,18 +104,16 @@ move_x :: proc(coord: [2]^i32, rx: ^f32, speed: f32, delta: f32) {
     }
 }
 
-move_y :: proc(coord: [2]^i32, ry: ^f32, speed: f32, delta: f32) {
-    x := coord[0]
-    y := coord[1]
-    ry^ += speed * delta
-    movey := math.round_f32(ry^)
+move_y :: proc(me: ^Entity, speed: f32, delta: f32) {
+    me.ry += speed * delta
+    movey := math.round_f32(me.ry)
     if movey != 0 {
-        ry^ -= movey
+        me.ry -= movey
         sign := math.sign(movey)
         for movey != 0 {
-            rect := rl.Rectangle{f32(x^), f32(y^) + sign, 16, 16}
+            rect := rl.Rectangle{f32(me.x), f32(me.y) + sign, f32(me.hitbox_size), f32(me.hitbox_size)}
             if !get_collisions(rect) {
-                y^ += i32(sign)
+                me.y += i32(sign)
                 movey -= sign
             } else {
                 break

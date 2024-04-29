@@ -43,6 +43,7 @@ item_init :: proc(x: i32, y: i32) -> Entity {
     e.y = y
     e.species = .Item
     e.data = rawptr(edata)
+    e.hitbox_size = 5
     return e
 }
 
@@ -77,12 +78,13 @@ testobj_init :: proc(x: i32, y: i32) -> Entity {
     e.y = y
     e.species = .TestObj
     e.data = edata
+    e.hitbox_size = 16
     return e
 }
 
 @(private="file")
 testobj_update :: proc(me: ^Entity, delta: f32) {
-    move_x({&me.x, &me.y}, &me.rx, 3, delta)
+    move_x(me, 3, delta)
 }
 
 @(private="file")
@@ -110,8 +112,8 @@ frog_init :: proc(x: i32, y: i32) -> Entity {
 
 @(private="file")
 frog_update :: proc(me: ^Entity, delta: f32) {
-    move_y({&me.x, &me.y}, &me.ry, 4, delta)
-    move_x({&me.x, &me.y}, &me.rx, 2.5, delta)
+    move_y(me, 4, delta)
+    move_x(me, 2.5, delta)
 }
 
 @(private="file")
