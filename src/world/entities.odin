@@ -32,14 +32,14 @@ create_entity :: proc(x: i32, y: i32, species: Species) -> int {
     e.cx = i32(math.floor(f32(x) / 256))
     e.cy = i32(math.floor(f32(y) / 256))
     append(&entities, e)
-    return len(&entities) // might not be useful. well, better safe than sorry???
+    return len(&entities) - 1 // index of this entity. good for extensions to this procedure
 }
 
 create_item :: proc(x: i32, y: i32, type: ItemType) {
     i := create_entity(x, y, .Item)
-    data := cast(^ItemData)entities[i-1].data
-    entities[i-1].x += i32(rl.GetRandomValue(0, 15))
-    entities[i-1].y += i32(rl.GetRandomValue(0, 15))
+    data := cast(^ItemData)entities[i].data
+    entities[i].x += i32(rl.GetRandomValue(0, 15))
+    entities[i].y += i32(rl.GetRandomValue(0, 15))
     data.type = type
 }
 
