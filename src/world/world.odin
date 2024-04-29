@@ -119,8 +119,9 @@ damage_tile :: proc(x: i32, y: i32) {
 
     c.tiles[tx][ty].state += 1
 
-    if c.tiles[tx][ty].state == 60 {
+    if c.tiles[tx][ty].state == 30 {
         c.tiles[tx][ty] = Tile{.NONE, 0}
+        create_item(x * 16, y * 16, .BLOCK)
     }
 }
 

@@ -58,8 +58,8 @@ game_draw :: proc() {
                 world.draw_chunk({world.plr.cx + i32(cx), world.plr.cy + i32(cy)})
             }
         }
-        world.plr_draw()
         world.entities_draw()
+        world.plr_draw()
 
         // Draw mouse build preview
         mpos := world.get_mouse_pos()

@@ -17,6 +17,7 @@ Player :: struct {
     cx: i32, // Chunk Position
     cy: i32,
 
+    // Actual real data should go here
     health: u8,
     inventory: [20]ItemStack,
     inv_select: u8

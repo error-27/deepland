@@ -36,7 +36,9 @@ create_entity :: proc(x: i32, y: i32, species: Species) -> int {
 
 create_item :: proc(x: i32, y: i32, type: ItemType) {
     i := create_entity(x, y, .Item)
-    data := cast(^ItemData)entities[i].data
+    data := cast(^ItemData)entities[i-1].data
+    entities[i-1].x += i32(rl.GetRandomValue(0, 15))
+    entities[i-1].y += i32(rl.GetRandomValue(0, 15))
     data.type = type
 }
 
