@@ -40,7 +40,12 @@ plr_init :: proc() {
 plr_update :: proc(delta: f32) {
     if rl.IsMouseButtonDown(rl.MouseButton.LEFT) && plr.inventory[plr.inv_select].amount > 0 {
         mpos := world.get_mouse_pos()
-        if !rl.CheckCollisionRecs(plr_get_rectangle(), {f32(mpos[0]) * 16, f32(mpos[1]) * 16, 16, 16}) {
+        
+        // Make sure the position isn't intersecting an entity or the player
+        if 
+            !rl.CheckCollisionRecs(plr_get_rectangle(), {f32(mpos[0]) * 16, f32(mpos[1]) * 16, 16, 16}) &&
+            !is_entity_colliding(rl.Rectangle{f32(mpos[0]) * 16, f32(mpos[1]) * 16, 16, 16})
+        {
             result := world.place_tile(mpos[0], mpos[1], .TESTTILE)
             if result {
                 plr.inventory[plr.inv_select].amount -= 1
