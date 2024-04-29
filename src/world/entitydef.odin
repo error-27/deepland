@@ -76,7 +76,7 @@ testobj_init :: proc(x: i32, y: i32) -> Entity {
 
 @(private="file")
 testobj_update :: proc(me: ^Entity, delta: f32) {
-    moveX({&me.x, &me.y}, &me.rx, 3, delta)
+    move_x({&me.x, &me.y}, &me.rx, 3, delta)
 }
 
 @(private="file")
@@ -104,8 +104,8 @@ frog_init :: proc(x: i32, y: i32) -> Entity {
 
 @(private="file")
 frog_update :: proc(me: ^Entity, delta: f32) {
-    moveY({&me.x, &me.y}, &me.ry, 4, delta)
-    moveX({&me.x, &me.y}, &me.rx, 2.5, delta)
+    move_y({&me.x, &me.y}, &me.ry, 4, delta)
+    move_x({&me.x, &me.y}, &me.rx, 2.5, delta)
 }
 
 @(private="file")

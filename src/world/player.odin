@@ -75,8 +75,8 @@ plr_update :: proc(delta: f32) {
     h_dir := cast(i32)right - cast(i32)left
     v_dir := cast(i32)down - cast(i32)up
 
-    moveX({&plr.x, &plr.y}, &plr.rx, cast(f32)h_dir * cast(f32)PLR_SPEED, delta)
-    moveY({&plr.x, &plr.y}, &plr.ry, cast(f32)v_dir * cast(f32)PLR_SPEED, delta)
+    move_x({&plr.x, &plr.y}, &plr.rx, cast(f32)h_dir * cast(f32)PLR_SPEED, delta)
+    move_y({&plr.x, &plr.y}, &plr.ry, cast(f32)v_dir * cast(f32)PLR_SPEED, delta)
 
     plr.cx = i32(math.floor(f32(plr.x) / 256))
     plr.cy = i32(math.floor(f32(plr.y) / 256))

@@ -83,7 +83,7 @@ entities_draw :: proc() {
 
 // Utility procedures for moving entities
 // TODO: Move these somewhere better?
-moveX :: proc(coord: [2]^i32, rx: ^f32, speed: f32, delta: f32) {
+move_x :: proc(coord: [2]^i32, rx: ^f32, speed: f32, delta: f32) {
     x := coord[0]
     y := coord[1]
     rx^ += speed * delta
@@ -103,7 +103,7 @@ moveX :: proc(coord: [2]^i32, rx: ^f32, speed: f32, delta: f32) {
     }
 }
 
-moveY :: proc(coord: [2]^i32, ry: ^f32, speed: f32, delta: f32) {
+move_y :: proc(coord: [2]^i32, ry: ^f32, speed: f32, delta: f32) {
     x := coord[0]
     y := coord[1]
     ry^ += speed * delta
