@@ -96,7 +96,14 @@ plr_get_rectangle :: proc() -> rl.Rectangle {
     return {f32(plr.x) + plr.rx, f32(plr.y) + plr.ry, 16, 16}
 }
 
+//TODO: add item limits, new stacks in empty slots, removing type of empty stacks
 plr_collect_item :: proc(type: ItemType) -> bool {
+    for i in 0..<len(plr.inventory) {
+        if plr.inventory[i].type == type {
+            plr.inventory[i].amount += 1
+            return true
+        }
+    }
     return false
 }
 
