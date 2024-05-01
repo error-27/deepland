@@ -96,6 +96,10 @@ plr_get_rectangle :: proc() -> rl.Rectangle {
     return {f32(plr.x) + plr.rx, f32(plr.y) + plr.ry, 16, 16}
 }
 
+plr_collect_item :: proc(type: ItemType) -> bool {
+    return false
+}
+
 // For now these are copied directly from entity movement. may have differences later
 @(private="file")
 plr_move_x :: proc(me: ^Player, speed: f32, delta: f32) {

@@ -50,7 +50,9 @@ item_init :: proc(x: i32, y: i32) -> Entity {
 @(private="file")
 item_update :: proc(me: ^Entity, delta: f32) {
     data := cast(^ItemData)me.data
-    data.age += 1
+    if rl.CheckCollisionRecs({f32(me.x), f32(me.y), f32(me.hitbox_size), f32(me.hitbox_size)}, plr_get_rectangle()) {
+        data.collected = plr_collect_item(data.type)
+    }
 }
 
 @(private="file")
@@ -66,7 +68,8 @@ item_draw :: proc(me: ^Entity) {
 
 @(private="file")
 item_die :: proc(me: ^Entity) -> bool {
-    return false
+    data := cast(^ItemData)me.data
+    return data.collected
 }
 
 // ----------------- TESTOBJ -----------------
@@ -134,7 +137,7 @@ frog_die :: proc(me: ^Entity) -> bool {
 
 ItemData :: struct {
     type: ItemType,
-    age: u32 // potentially kill items after a certain age? maybe i'll go with the infinite life approach tho. idk
+    collected: bool
 }
 
 EntityData :: struct {
