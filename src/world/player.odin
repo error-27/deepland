@@ -8,6 +8,8 @@ import "../world"
 PLR_SIZE :: 16
 PLR_SPEED :: 100
 
+MAX_STACK_SIZE :: 100
+
 Player :: struct {
     x: i32, // Position
     y: i32,
@@ -49,6 +51,9 @@ plr_update :: proc(delta: f32) {
             result := world.place_tile(mpos[0], mpos[1], .TESTTILE)
             if result {
                 plr.inventory[plr.inv_select].amount -= 1
+                if plr.inventory[plr.inv_select].amount == 0 {
+                    plr.inventory[plr.inv_select].type = .NONE
+                }
             }
         }
     }
@@ -96,10 +101,20 @@ plr_get_rectangle :: proc() -> rl.Rectangle {
     return {f32(plr.x) + plr.rx, f32(plr.y) + plr.ry, 16, 16}
 }
 
-//TODO: add item limits, new stacks in empty slots, removing type of empty stacks
+// Returns true if an item is successfully collected, false if not
 plr_collect_item :: proc(type: ItemType) -> bool {
+    // Find available same-item stacks
     for i in 0..<len(plr.inventory) {
-        if plr.inventory[i].type == type {
+        if plr.inventory[i].type == type && plr.inventory[i].amount < MAX_STACK_SIZE {
+            plr.inventory[i].amount += 1
+            return true
+        }
+    }
+    
+    // Loop again to find first empty slot
+    for i in 0..<len(plr.inventory) {
+        if plr.inventory[i].type == .NONE {
+            plr.inventory[i].type = type
             plr.inventory[i].amount += 1
             return true
         }
