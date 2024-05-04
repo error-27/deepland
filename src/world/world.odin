@@ -15,6 +15,7 @@ TileType :: enum {
 
 Tile :: struct {
     type: TileType,
+    damage: u8,
     state: u8
 }
 
@@ -74,7 +75,7 @@ draw_chunk :: proc(coord: [2]i32) {
 
             #partial switch c.tiles[x][y].type {
                 case .TESTTILE:
-                    rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, {255 - (c.tiles[x][y].state), 0, 0, 255})
+                    rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, {255 - (c.tiles[x][y].damage), 0, 0, 255})
             }
         }
     }
@@ -129,14 +130,14 @@ damage_tile :: proc(x: i32, y: i32) {
         ty = 16 + ty
     }
 
-    c.tiles[tx][ty].state += 1
+    c.tiles[tx][ty].damage += 1
 
-    if c.tiles[tx][ty].state == 30 {
+    if c.tiles[tx][ty].damage == 30 {
         drops := block_drops[c.tiles[tx][ty].type]
         for i in 0..<drops.amount {
             create_item(x * 16, y * 16, drops.type)
         }
-        c.tiles[tx][ty] = Tile{.NONE, 0}
+        c.tiles[tx][ty] = Tile{.NONE, 0, 0}
     }
 }
 
