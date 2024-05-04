@@ -68,12 +68,30 @@ game_draw :: proc() {
 
     rl.EndMode2D()
 
-    buf: [3]byte
-    selection_str := strconv.itoa(buf[:], int(world.plr.inv_select))
-    rl.DrawText(strings.clone_to_cstring(selection_str), 10, 40, 20, rl.BLUE)
+    draw_hud()
 }
 
 game_end :: proc() {
     world.clear_entities()
     world.clear_chunks()
+}
+
+@(private="file")
+draw_hud :: proc() {
+    draw_inventory_slot(world.plr.inv_select, 24, SCREEN_HEIGHT - 20)
+    if world.plr.inv_select != 0 {
+        draw_inventory_slot(world.plr.inv_select - 1, 4, SCREEN_HEIGHT - 20)
+    }
+    if world.plr.inv_select < len(world.plr.inventory) - 1 {
+        draw_inventory_slot(world.plr.inv_select + 1, 44, SCREEN_HEIGHT - 20)
+    }
+
+    buf: [3]byte
+    selection_str := strconv.itoa(buf[:], int(world.plr.inv_select))
+    rl.DrawText(strings.clone_to_cstring(selection_str), 10, 40, 20, rl.BLUE)
+}
+
+@(private="file")
+draw_inventory_slot :: proc(index: u8, x: i32, y: i32) {
+    rl.DrawRectangle(x, y, 16, 16, rl.GRAY)
 }
