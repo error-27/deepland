@@ -135,7 +135,7 @@ damage_tile :: proc(x: i32, y: i32) {
     if c.tiles[tx][ty].damage == 30 {
         drops := block_drops[c.tiles[tx][ty].type]
         for i in 0..<drops.amount {
-            create_item(x * 16, y * 16, drops.type)
+            create_item(x * 16, y * 16, plr.depth, drops.type)
         }
         c.tiles[tx][ty] = Tile{.NONE, 0, 0}
     }

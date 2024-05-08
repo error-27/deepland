@@ -20,7 +20,7 @@ game_init :: proc() {
     camera.target = {cast(f32)world.plr.x - SCREEN_WIDTH/2 + 8, cast(f32)world.plr.y - SCREEN_HEIGHT/2 + 8}
 
     world.init_chunks()
-    world.create_entity(10, 10, .TestObj)
+    world.create_entity(10, 10, 0, .TestObj)
 }
 
 game_update :: proc(delta: f32) {

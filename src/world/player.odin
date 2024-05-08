@@ -18,6 +18,7 @@ Player :: struct {
     dir: Direction,
     cx: i32, // Chunk Position
     cy: i32,
+    depth: u32,
 
     // Actual real data should go here
     health: u8,
@@ -37,6 +38,7 @@ plr_init :: proc() {
     plr.inventory[0] = {.BLOCK, 14}
     plr.health = 10
     plr.inv_select = 0
+    plr.depth = 0
 }
 
 plr_update :: proc(delta: f32) {
