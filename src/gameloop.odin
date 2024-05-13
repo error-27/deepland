@@ -3,6 +3,7 @@ package deepland
 import rl "vendor:raylib"
 import "core:strconv"
 import "core:strings"
+import "ui"
 
 GameState :: enum {
     MENU,
@@ -36,6 +37,7 @@ draw :: proc() {
 }
 
 start_loop :: proc() {
+    ui.load_textures()
     switch_state(.MENU)
 
     for !rl.WindowShouldClose() {

@@ -6,6 +6,7 @@ import "core:strconv"
 import "core:strings"
 import "world"
 import "globals"
+import "ui"
 
 @(private="file")
 paused := false
