@@ -38,6 +38,7 @@ draw :: proc() {
 
 start_loop :: proc() {
     ui.load_textures()
+    defer ui.unload_textures()
     switch_state(.MENU)
 
     for !rl.WindowShouldClose() {

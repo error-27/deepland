@@ -9,6 +9,10 @@ load_textures :: proc() {
     number_texture = rl.LoadTexture("assets/numbers.png")
 }
 
+unload_textures :: proc() {
+    rl.UnloadTexture(number_texture)
+}
+
 draw_numbers :: proc(val: u32, x: f32, y: f32) {
     num_length := u32(math.floor_f32(math.log10(f32(val)) + 1))
 
