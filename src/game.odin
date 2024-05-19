@@ -90,6 +90,8 @@ draw_hud :: proc() {
     buf: [3]byte
     selection_str := strconv.itoa(buf[:], int(world.plr.inv_select))
     rl.DrawText(strings.clone_to_cstring(selection_str), 10, 40, 20, rl.BLUE)
+
+    ui.draw_numbers(u32(world.plr.depth), 10, 10)
 }
 
 @(private="file")

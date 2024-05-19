@@ -15,6 +15,7 @@ unload_textures :: proc() {
 
 draw_numbers :: proc(val: u32, x: f32, y: f32) {
     num_length := u32(math.floor_f32(math.log10(f32(val)) + 1))
+    if val == 0 { num_length = 1 }
 
     for i in 0..<num_length {
         rl.DrawTextureRec(number_texture, {8 * f32(get_digit(val, u32(i), num_length)), 0, 8, 8}, {x + (8 * f32(i)), y}, rl.WHITE)
