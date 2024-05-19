@@ -80,10 +80,10 @@ plr_update :: proc(delta: f32) {
         }
     }
 
-    left := rl.IsKeyDown(rl.KeyboardKey.LEFT) || rl.IsKeyDown(rl.KeyboardKey.A)
-    right := rl.IsKeyDown(rl.KeyboardKey.RIGHT) || rl.IsKeyDown(rl.KeyboardKey.D)
-    up := rl.IsKeyDown(rl.KeyboardKey.UP) || rl.IsKeyDown(rl.KeyboardKey.W)
-    down := rl.IsKeyDown(rl.KeyboardKey.DOWN) || rl.IsKeyDown(rl.KeyboardKey.S)
+    left := rl.IsKeyDown(rl.KeyboardKey.A)
+    right := rl.IsKeyDown(rl.KeyboardKey.D)
+    up := rl.IsKeyDown(rl.KeyboardKey.W)
+    down := rl.IsKeyDown(rl.KeyboardKey.S)
 
     h_dir := cast(i32)right - cast(i32)left
     v_dir := cast(i32)down - cast(i32)up
@@ -94,6 +94,20 @@ plr_update :: proc(delta: f32) {
     plr.cx = i32(math.floor(f32(plr.x) / 256))
     plr.cy = i32(math.floor(f32(plr.y) / 256))
 
+    if rl.IsKeyPressed(rl.KeyboardKey.A) {
+        plr.dir = .Left
+    }
+    if rl.IsKeyPressed(rl.KeyboardKey.D) {
+        plr.dir = .Right
+    }
+    if rl.IsKeyPressed(rl.KeyboardKey.W) {
+        plr.dir = .Up
+    }
+    if rl.IsKeyPressed(rl.KeyboardKey.S) {
+        plr.dir = .Down
+    }
+
+    // Debug controls. To be removed later
     if rl.IsKeyPressed(rl.KeyboardKey.U) {
         plr.depth += 1
     }
