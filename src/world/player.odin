@@ -18,7 +18,7 @@ Player :: struct {
     dir: Direction,
     cx: i32, // Chunk Position
     cy: i32,
-    depth: u32,
+    depth: i32,
 
     // Actual real data should go here
     health: u8,
@@ -50,7 +50,7 @@ plr_update :: proc(delta: f32) {
             !rl.CheckCollisionRecs(plr_get_rectangle(), {f32(mpos[0]) * 16, f32(mpos[1]) * 16, 16, 16}) &&
             !is_entity_colliding(rl.Rectangle{f32(mpos[0]) * 16, f32(mpos[1]) * 16, 16, 16})
         {
-            result := world.place_tile(mpos[0], mpos[1], .TESTTILE)
+            result := world.place_tile(mpos[0], mpos[1], plr.depth, .TESTTILE)
             if result {
                 plr.inventory[plr.inv_select].amount -= 1
                 if plr.inventory[plr.inv_select].amount == 0 {
@@ -61,7 +61,7 @@ plr_update :: proc(delta: f32) {
     }
     if rl.IsMouseButtonDown(rl.MouseButton.RIGHT) {
         mpos := world.get_mouse_pos()
-        world.damage_tile(mpos[0], mpos[1])
+        world.damage_tile(mpos[0], mpos[1], plr.depth)
     }
 
     mouse_move := rl.GetMouseWheelMove()
@@ -93,6 +93,13 @@ plr_update :: proc(delta: f32) {
 
     plr.cx = i32(math.floor(f32(plr.x) / 256))
     plr.cy = i32(math.floor(f32(plr.y) / 256))
+
+    if rl.IsKeyPressed(rl.KeyboardKey.U) {
+        plr.depth += 1
+    }
+    if rl.IsKeyPressed(rl.KeyboardKey.J) {
+        plr.depth -= 1
+    }
 }
 
 plr_draw :: proc() {
@@ -134,7 +141,7 @@ plr_move_x :: proc(me: ^Player, speed: f32, delta: f32) {
         sign := math.sign(movex)
         for movex != 0 {
             rect := rl.Rectangle{f32(me.x) + sign, f32(me.y), 16, 16}
-            if !is_tile_colliding(rect) {
+            if !is_tile_colliding(rect, me.depth) {
                 me.x += i32(sign)
                 movex -= sign
             } else {
@@ -153,7 +160,7 @@ plr_move_y :: proc(me: ^Player, speed: f32, delta: f32) {
         sign := math.sign(movey)
         for movey != 0 {
             rect := rl.Rectangle{f32(me.x), f32(me.y) + sign, 16, 16}
-            if !is_tile_colliding(rect) {
+            if !is_tile_colliding(rect, me.depth) {
                 me.y += i32(sign)
                 movey -= sign
             } else {

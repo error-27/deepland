@@ -44,8 +44,8 @@ game_update :: proc(delta: f32) {
     // This is done in a 3x3 shape around the player
     for cx in -1..=1 {
         for cy in -1..=1 {
-            if !({world.plr.cx + i32(cx), world.plr.cy + i32(cy)} in world.chunks) {
-                world.generate_chunk(world.plr.cx + i32(cx), world.plr.cy + i32(cy))
+            if !({world.plr.cx + i32(cx), world.plr.cy + i32(cy), world.plr.depth} in world.chunks) {
+                world.generate_chunk(world.plr.cx + i32(cx), world.plr.cy + i32(cy), world.plr.depth)
             }
         }
     }
@@ -56,7 +56,7 @@ game_draw :: proc() {
     rl.BeginMode2D(globals.camera)
         for cx in -1..=1 {
             for cy in -1..=1 {
-                world.draw_chunk({world.plr.cx + i32(cx), world.plr.cy + i32(cy)})
+                world.draw_chunk({world.plr.cx + i32(cx), world.plr.cy + i32(cy), world.plr.depth})
             }
         }
         world.entities_draw()

@@ -31,7 +31,7 @@ Chunk :: struct {
     y: i32,
 }
 
-chunks: map[[2]i32]Chunk
+chunks: map[[3]i32]Chunk
 
 // Air should never break, right?? Well if it does something else is seriously wrong
 block_drops := #partial [TileType]ItemStack {
@@ -39,11 +39,11 @@ block_drops := #partial [TileType]ItemStack {
 }
 
 init_chunks :: proc() {
-    generate_chunk(0, 0)
-    place_tile(3, 6, .TESTTILE)
+    generate_chunk(0, 0, 0)
+    place_tile(3, 6, 0, .TESTTILE)
 }
 
-generate_chunk :: proc(x: i32, y: i32) {
+generate_chunk :: proc(x: i32, y: i32, depth: i32) {
     noise := rl.GenImagePerlinNoise(16, 16, x * 16, y * 16, NOISE_SCALE)
     c := Chunk{}
     for nx in 0..<16 {
@@ -59,10 +59,10 @@ generate_chunk :: proc(x: i32, y: i32) {
 
     c.x = x
     c.y = y
-    chunks[{x, y}] = c
+    chunks[{x, y, depth}] = c
 }
 
-draw_chunk :: proc(coord: [2]i32) {
+draw_chunk :: proc(coord: [3]i32) {
     c := chunks[coord]
     for x in 0..<16 {
         for y in 0..<16 {
@@ -88,11 +88,11 @@ clear_chunks :: proc() {
 }
 
 // Returns false when a place fails, returns true when it succeeds
-place_tile :: proc(x: i32, y: i32, tile: TileType) -> bool {
+place_tile :: proc(x: i32, y: i32, depth: i32, tile: TileType) -> bool {
     chunk_x := i32(math.floor(f32(x) / 16))
     chunk_y := i32(math.floor(f32(y) / 16))
 
-    c := &chunks[{chunk_x, chunk_y}]
+    c := &chunks[{chunk_x, chunk_y, depth}]
     t := Tile{}
     t.type = tile
 
@@ -114,11 +114,11 @@ place_tile :: proc(x: i32, y: i32, tile: TileType) -> bool {
     return true
 }
 
-damage_tile :: proc(x: i32, y: i32) {
+damage_tile :: proc(x: i32, y: i32, depth: i32) {
     chunk_x := i32(math.floor(f32(x) / 16))
     chunk_y := i32(math.floor(f32(y) / 16))
 
-    c := &chunks[{chunk_x, chunk_y}]
+    c := &chunks[{chunk_x, chunk_y, depth}]
 
     tx := x % 16
     ty := y % 16
@@ -141,9 +141,9 @@ damage_tile :: proc(x: i32, y: i32) {
     }
 }
 
-is_tile_colliding :: proc(rect: rl.Rectangle) -> bool {
+is_tile_colliding :: proc(rect: rl.Rectangle, depth: i32) -> bool {
     // Because I don't like the idea of copying entire chunks in memory every frame I'm going to go by index here
-    to_check: [4][2]i32
+    to_check: [4][3]i32
     chk_flags: [4]bool
 
     base_chunk_x := i32(math.floor(rect.x / 256))
@@ -151,23 +151,23 @@ is_tile_colliding :: proc(rect: rl.Rectangle) -> bool {
     chk_flags[0] = true
 
     // Chunk at coordinate
-    to_check[0] = {base_chunk_x, base_chunk_y}
+    to_check[0] = {base_chunk_x, base_chunk_y, depth}
 
     // if it extends horizontally into a neighboring chunk, add that chunk
     if i32(math.floor((rect.x + rect.width) / 256)) != base_chunk_x {
-        to_check[1] = {i32(math.floor((rect.x + rect.width) / 256)), base_chunk_y}
+        to_check[1] = {i32(math.floor((rect.x + rect.width) / 256)), base_chunk_y, depth}
         chk_flags[1] = true
     }
 
     // if it extends vertically into a neighboring chunk, add that chunk
     if i32(math.floor((rect.y + rect.height) / 256)) != base_chunk_y {
-        to_check[2] = {base_chunk_x, i32(math.floor((rect.y + rect.height) / 256))}
+        to_check[2] = {base_chunk_x, i32(math.floor((rect.y + rect.height) / 256)), depth}
         chk_flags[2] = true
     }
 
     // if it extends both ways, it's at a corner and we need a 4th chunk
     if chk_flags[1] && chk_flags[2] {
-        to_check[3] = {to_check[1][0], to_check[2][1]}
+        to_check[3] = {to_check[1][0], to_check[2][1], depth}
         chk_flags[3] = true
     }
 

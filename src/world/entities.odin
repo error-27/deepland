@@ -19,7 +19,7 @@ Entity :: struct {
     ry: f32,
     cx: i32,
     cy: i32,
-    depth: u32,
+    depth: i32,
     species: Species,
     data: rawptr,
     hitbox_size: u32
@@ -28,7 +28,7 @@ Entity :: struct {
 entities: [dynamic]Entity // The current array of entities
 
 // Procedures for managing and updating entities
-create_entity :: proc(x: i32, y: i32, depth: u32, species: Species) -> int {
+create_entity :: proc(x: i32, y: i32, depth: i32, species: Species) -> int {
     e := init_procs[species](x, y)
     e.cx = i32(math.floor(f32(x) / 256))
     e.cy = i32(math.floor(f32(y) / 256))
@@ -37,7 +37,7 @@ create_entity :: proc(x: i32, y: i32, depth: u32, species: Species) -> int {
     return len(&entities) - 1 // index of this entity. good for extensions to this procedure
 }
 
-create_item :: proc(x: i32, y: i32, depth: u32, type: ItemType) {
+create_item :: proc(x: i32, y: i32, depth: i32, type: ItemType) {
     i := create_entity(x, y, depth, .Item)
     data := cast(^ItemData)entities[i].data
     entities[i].x += i32(rl.GetRandomValue(0, 15))
@@ -58,7 +58,7 @@ entities_update :: proc(delta: f32) {
         e := &entities[i]
 
         // Exclude entities that aren't in render distance
-        if e.cx < plr.cx -1 || e.cx > plr.cx + 1 || e.cy < plr.cy -1 || e.cy > plr.cy + 1 {
+        if e.cx < plr.cx -1 || e.cx > plr.cx + 1 || e.cy < plr.cy -1 || e.cy > plr.cy + 1 || e.depth != plr.depth {
             i += 1
             continue
         }
@@ -81,6 +81,9 @@ entities_update :: proc(delta: f32) {
 
 entities_draw :: proc() {
     for i in 0..<len(entities) {
+        if entities[i].depth != plr.depth {
+            continue
+        }
         e := &entities[i]
         draw_procs[e.species](e)
     }
@@ -121,7 +124,7 @@ move_x :: proc(me: ^Entity, speed: f32, delta: f32) {
         sign := math.sign(movex)
         for movex != 0 {
             rect := rl.Rectangle{f32(me.x) + sign, f32(me.y), f32(me.hitbox_size), f32(me.hitbox_size)}
-            if !is_tile_colliding(rect) {
+            if !is_tile_colliding(rect, me.depth) {
                 me.x += i32(sign)
                 movex -= sign
             } else {
@@ -139,7 +142,7 @@ move_y :: proc(me: ^Entity, speed: f32, delta: f32) {
         sign := math.sign(movey)
         for movey != 0 {
             rect := rl.Rectangle{f32(me.x), f32(me.y) + sign, f32(me.hitbox_size), f32(me.hitbox_size)}
-            if !is_tile_colliding(rect) {
+            if !is_tile_colliding(rect, me.depth) {
                 me.y += i32(sign)
                 movey -= sign
             } else {
