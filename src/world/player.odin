@@ -107,6 +107,14 @@ plr_update :: proc(delta: f32) {
         plr.dir = .Down
     }
 
+    if rl.IsKeyPressed(rl.KeyboardKey.H) {
+        tpos := get_tile_pos(plr.x, plr.y) + DirVecs[plr.dir]
+        if plr.dir == .Right || plr.dir == .Down {
+            tpos += DirVecs[plr.dir]
+        }
+        place_tile(tpos[0], tpos[1], plr.depth, .TESTTILE)
+    }
+
     // Debug controls. To be removed later
     if rl.IsKeyPressed(rl.KeyboardKey.U) {
         plr.depth += 1
@@ -182,4 +190,8 @@ plr_move_y :: proc(me: ^Player, speed: f32, delta: f32) {
             }
         }
     }
+}
+
+get_tile_pos :: proc(x: i32, y: i32) -> [2]i32 {
+    return {i32(math.floor(f32(x) / 16)), i32(math.floor(f32(y) / 16))}
 }
