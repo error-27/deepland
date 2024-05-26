@@ -108,11 +108,19 @@ plr_update :: proc(delta: f32) {
     }
 
     if rl.IsKeyPressed(rl.KeyboardKey.H) {
-        tpos := get_tile_pos(plr.x, plr.y) + DirVecs[plr.dir]
-        if plr.dir == .Right || plr.dir == .Down {
-            tpos += DirVecs[plr.dir]
+        tpos := plr_get_focused_tile()
+        if 
+            !rl.CheckCollisionRecs(plr_get_rectangle(), {f32(tpos[0]) * 16, f32(tpos[1]) * 16, 16, 16}) &&
+            !is_entity_colliding(rl.Rectangle{f32(tpos[0]) * 16, f32(tpos[1]) * 16, 16, 16})
+        {
+            result := world.place_tile(tpos[0], tpos[1], plr.depth, .TESTTILE)
+            if result {
+                plr.inventory[plr.inv_select].amount -= 1
+                if plr.inventory[plr.inv_select].amount == 0 {
+                    plr.inventory[plr.inv_select].type = .NONE
+                }
+            }
         }
-        place_tile(tpos[0], tpos[1], plr.depth, .TESTTILE)
     }
 
     // Debug controls. To be removed later
@@ -126,6 +134,8 @@ plr_update :: proc(delta: f32) {
 
 plr_draw :: proc() {
     rl.DrawRectangle(plr.x, plr.y, PLR_SIZE, PLR_SIZE, rl.ORANGE)
+    tpos := plr_get_focused_tile()
+    rl.DrawRectangleLines(tpos[0] * 16, tpos[1] * 16, 16, 16, rl.WHITE)
 }
 
 plr_get_rectangle :: proc() -> rl.Rectangle {
@@ -190,6 +200,26 @@ plr_move_y :: proc(me: ^Player, speed: f32, delta: f32) {
             }
         }
     }
+}
+
+@(private="file")
+plr_get_focused_tile :: proc() -> [2]i32 {
+    tpos := [2]i32{0, 0}
+
+    switch plr.dir {
+        case .Left:
+            tpos = get_tile_pos(plr.x, plr.y + 8)
+        case .Right:
+            tpos = get_tile_pos(plr.x + 15, plr.y + 8)
+        case .Down:
+            tpos = get_tile_pos(plr.x + 8, plr.y + 15)
+        case .Up:
+            tpos = get_tile_pos(plr.x + 8, plr.y)
+    }
+
+    tpos += DirVecs[plr.dir]
+
+    return tpos
 }
 
 get_tile_pos :: proc(x: i32, y: i32) -> [2]i32 {
