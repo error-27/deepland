@@ -42,27 +42,29 @@ plr_init :: proc() {
 }
 
 plr_update :: proc(delta: f32) {
-    if rl.IsMouseButtonDown(rl.MouseButton.LEFT) && plr.inventory[plr.inv_select].amount > 0 {
-        mpos := world.get_mouse_pos()
+    // MOUSE PLACE CONTROlS (DISABLED FOR THE TIME BEING)
+
+    // if rl.IsMouseButtonDown(rl.MouseButton.LEFT) && plr.inventory[plr.inv_select].amount > 0 {
+    //     mpos := world.get_mouse_pos()
         
-        // Make sure the position isn't intersecting an entity or the player
-        if 
-            !rl.CheckCollisionRecs(plr_get_rectangle(), {f32(mpos[0]) * 16, f32(mpos[1]) * 16, 16, 16}) &&
-            !is_entity_colliding(rl.Rectangle{f32(mpos[0]) * 16, f32(mpos[1]) * 16, 16, 16})
-        {
-            result := world.place_tile(mpos[0], mpos[1], plr.depth, .TESTTILE)
-            if result {
-                plr.inventory[plr.inv_select].amount -= 1
-                if plr.inventory[plr.inv_select].amount == 0 {
-                    plr.inventory[plr.inv_select].type = .NONE
-                }
-            }
-        }
-    }
-    if rl.IsMouseButtonDown(rl.MouseButton.RIGHT) {
-        mpos := world.get_mouse_pos()
-        world.damage_tile(mpos[0], mpos[1], plr.depth)
-    }
+    //     // Make sure the position isn't intersecting an entity or the player
+    //     if 
+    //         !rl.CheckCollisionRecs(plr_get_rectangle(), {f32(mpos[0]) * 16, f32(mpos[1]) * 16, 16, 16}) &&
+    //         !is_entity_colliding(rl.Rectangle{f32(mpos[0]) * 16, f32(mpos[1]) * 16, 16, 16})
+    //     {
+    //         result := world.place_tile(mpos[0], mpos[1], plr.depth, .TESTTILE)
+    //         if result {
+    //             plr.inventory[plr.inv_select].amount -= 1
+    //             if plr.inventory[plr.inv_select].amount == 0 {
+    //                 plr.inventory[plr.inv_select].type = .NONE
+    //             }
+    //         }
+    //     }
+    // }
+    // if rl.IsMouseButtonDown(rl.MouseButton.RIGHT) {
+    //     mpos := world.get_mouse_pos()
+    //     world.damage_tile(mpos[0], mpos[1], plr.depth)
+    // }
 
     mouse_move := rl.GetMouseWheelMove()
 
@@ -122,6 +124,10 @@ plr_update :: proc(delta: f32) {
             }
         }
     }
+    if rl.IsKeyDown(rl.KeyboardKey.N) {
+        tpos := plr_get_focused_tile()
+        damage_tile(tpos[0], tpos[1], plr.depth)
+    }
 
     // Debug controls. To be removed later
     if rl.IsKeyPressed(rl.KeyboardKey.U) {
@@ -139,7 +145,7 @@ plr_draw :: proc() {
 }
 
 plr_get_rectangle :: proc() -> rl.Rectangle {
-    return {f32(plr.x) + plr.rx, f32(plr.y) + plr.ry, 16, 16}
+    return {f32(plr.x), f32(plr.y), 16, 16}
 }
 
 // Returns true if an item is successfully collected, false if not

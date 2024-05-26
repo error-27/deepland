@@ -63,9 +63,9 @@ game_draw :: proc() {
         world.plr_draw()
 
         // Draw mouse build preview
-        mpos := world.get_mouse_pos()
+        // mpos := world.get_mouse_pos()
 
-        rl.DrawRectangleLines(mpos[0] * 16, mpos[1] * 16, 16, 16, rl.WHITE)
+        // rl.DrawRectangleLines(mpos[0] * 16, mpos[1] * 16, 16, 16, rl.WHITE)
 
     rl.EndMode2D()
 
