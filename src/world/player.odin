@@ -96,6 +96,20 @@ plr_update :: proc(delta: f32) {
     plr.cx = i32(math.floor(f32(plr.x) / 256))
     plr.cy = i32(math.floor(f32(plr.y) / 256))
 
+    if h_dir == 0 {
+        if v_dir == -1 {
+            plr.dir = .Up
+        } else if v_dir == 1 {
+            plr.dir = .Down
+        }
+    } else if v_dir == 0 {
+        if h_dir == -1 {
+            plr.dir = .Left
+        } else if h_dir == 1 {
+            plr.dir = .Right
+        }
+    }
+
     if rl.IsKeyPressed(rl.KeyboardKey.A) {
         plr.dir = .Left
     }
@@ -109,6 +123,7 @@ plr_update :: proc(delta: f32) {
         plr.dir = .Down
     }
 
+    // Keyboard-based block placing
     if rl.IsKeyPressed(rl.KeyboardKey.H) {
         tpos := plr_get_focused_tile()
         if 
