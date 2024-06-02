@@ -23,7 +23,8 @@ Player :: struct {
     // Actual real data should go here
     health: u8,
     inventory: [20]ItemStack,
-    inv_select: u8
+    inv_select: u8,
+    dir_lock: bool
 }
 
 ItemStack :: struct {
@@ -96,31 +97,40 @@ plr_update :: proc(delta: f32) {
     plr.cx = i32(math.floor(f32(plr.x) / 256))
     plr.cy = i32(math.floor(f32(plr.y) / 256))
 
-    if h_dir == 0 {
-        if v_dir == -1 {
-            plr.dir = .Up
-        } else if v_dir == 1 {
-            plr.dir = .Down
+    // Skip direction setting if locked
+    if !plr.dir_lock {
+        if h_dir == 0 {
+            if v_dir == -1 {
+                plr.dir = .Up
+            } else if v_dir == 1 {
+                plr.dir = .Down
+            }
+        } else if v_dir == 0 {
+            if h_dir == -1 {
+                plr.dir = .Left
+            } else if h_dir == 1 {
+                plr.dir = .Right
+            }
         }
-    } else if v_dir == 0 {
-        if h_dir == -1 {
+
+        // Diagonal movement sets direction to most recent key pressed
+        if rl.IsKeyPressed(rl.KeyboardKey.A) {
             plr.dir = .Left
-        } else if h_dir == 1 {
+        }
+        if rl.IsKeyPressed(rl.KeyboardKey.D) {
             plr.dir = .Right
+        }
+        if rl.IsKeyPressed(rl.KeyboardKey.W) {
+            plr.dir = .Up
+        }
+        if rl.IsKeyPressed(rl.KeyboardKey.S) {
+            plr.dir = .Down
         }
     }
 
-    if rl.IsKeyPressed(rl.KeyboardKey.A) {
-        plr.dir = .Left
-    }
-    if rl.IsKeyPressed(rl.KeyboardKey.D) {
-        plr.dir = .Right
-    }
-    if rl.IsKeyPressed(rl.KeyboardKey.W) {
-        plr.dir = .Up
-    }
-    if rl.IsKeyPressed(rl.KeyboardKey.S) {
-        plr.dir = .Down
+    // Lock player direction
+    if rl.IsKeyPressed(rl.KeyboardKey.Q) {
+        plr.dir_lock = !plr.dir_lock
     }
 
     // Keyboard-based block placing
