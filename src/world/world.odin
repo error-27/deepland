@@ -38,9 +38,10 @@ block_drops := #partial [TileType]ItemStack {
     .TESTTILE = ItemStack{.BLOCK, 1}
 }
 
-init_chunks :: proc() {
-    generate_chunk(0, 0, 0)
-    place_tile(3, 6, 0, .TESTTILE)
+ground_tex: rl.Texture2D
+
+init_world :: proc() {
+    ground_tex = rl.LoadTexture("assets/ground_tiles.png")
 }
 
 generate_chunk :: proc(x: i32, y: i32, depth: i32) {
@@ -68,9 +69,11 @@ draw_chunk :: proc(coord: [3]i32) {
         for y in 0..<16 {
             switch c.floors[x][y] {
                 case .DIRT:
-                    rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, rl.BROWN)
+                    // rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, rl.BROWN)
+                    draw_ground_tile(c.x, c.y, i32(x), i32(y), 1)
                 case .GRASS:
-                    rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, rl.GREEN)
+                    // rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, rl.GREEN)
+                    draw_ground_tile(c.x, c.y, i32(x), i32(y), 0)
             }
 
             #partial switch c.tiles[x][y].type {
@@ -81,6 +84,10 @@ draw_chunk :: proc(coord: [3]i32) {
     }
     rl.DrawLine(coord[0] * 256, coord[1] * 256, (coord[0] + 1) * 256, coord[1] * 256, rl.RAYWHITE)
     rl.DrawLine(coord[0] * 256, coord[1] * 256, coord[0] * 256, (coord[1] + 1) * 256, rl.RAYWHITE)
+}
+
+draw_ground_tile :: proc(cx: i32, cy: i32, tx: i32, ty: i32, tindex: i32) {
+    rl.DrawTextureRec(ground_tex, {f32(16 * tindex), 0, 16, 16}, {f32(256 * cx + 16 * tx), f32(256 * cy + 16 * ty)}, rl.WHITE)
 }
 
 clear_chunks :: proc() {

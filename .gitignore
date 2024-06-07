@@ -2,3 +2,8 @@
 
 # OLS config file
 ols.json
+
+# Aseprite source files
+# May be unignored, idk right now
+# Just seems like useless clutter
+*.aseprite
