@@ -44,6 +44,12 @@ init_world :: proc() {
     ground_tex = rl.LoadTexture("assets/ground_tiles.png")
 }
 
+deinit_world :: proc() {
+    rl.UnloadTexture(ground_tex)
+    clear_entities()
+    clear_chunks()
+}
+
 generate_chunk :: proc(x: i32, y: i32, depth: i32) {
     noise := rl.GenImagePerlinNoise(16, 16, x * 16, y * 16, NOISE_SCALE)
     c := Chunk{}

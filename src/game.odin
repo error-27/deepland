@@ -73,8 +73,7 @@ game_draw :: proc() {
 }
 
 game_end :: proc() {
-    world.clear_entities()
-    world.clear_chunks()
+    world.deinit_world()
 }
 
 @(private="file")
