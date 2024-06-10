@@ -10,7 +10,8 @@ THRESHOLD :: 128
 
 TileType :: enum {
     NONE,
-    TESTTILE
+    WOOD,
+    STONE
 }
 
 Tile :: struct {
@@ -37,7 +38,7 @@ chunks: map[[3]i32]Chunk
 
 // Air should never break, right?? Well if it does something else is seriously wrong
 block_drops := #partial [TileType]ItemStack {
-    .TESTTILE = ItemStack{.BLOCK, 1}
+    .WOOD = ItemStack{.BLOCK, 1}
 }
 
 floor_textures := [Floor][2]i32 {
@@ -47,14 +48,22 @@ floor_textures := [Floor][2]i32 {
     .STAIR_UP = {1, 1}
 }
 
+tile_textures := #partial [TileType][2]i32 {
+    .WOOD = {0, 0},
+    .STONE = {1, 0}
+}
+
 ground_tex: rl.Texture2D
+tile_tex: rl.Texture2D
 
 init_world :: proc() {
     ground_tex = rl.LoadTexture("assets/ground_tiles.png")
+    tile_tex = rl.LoadTexture("assets/tiles.png")
 }
 
 deinit_world :: proc() {
     rl.UnloadTexture(ground_tex)
+    rl.UnloadTexture(tile_tex)
     clear_entities()
     clear_chunks()
 }
@@ -87,22 +96,28 @@ draw_chunk :: proc(coord: [3]i32) {
     c := chunks[coord]
     for x in 0..<16 {
         for y in 0..<16 {
-            draw_ground_tile(c.x, c.y, i32(x), i32(y), c.floors[x][y])
+            draw_floor(c.x, c.y, i32(x), i32(y), c.floors[x][y])
 
-            #partial switch c.tiles[x][y].type {
-                case .TESTTILE:
-                    rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, {255 - (c.tiles[x][y].damage), 0, 0, 255})
-            }
+            draw_tile(c.x, c.y, i32(x), i32(y), c.tiles[x][y].type)
         }
     }
     rl.DrawLine(coord[0] * 256, coord[1] * 256, (coord[0] + 1) * 256, coord[1] * 256, rl.RAYWHITE)
     rl.DrawLine(coord[0] * 256, coord[1] * 256, coord[0] * 256, (coord[1] + 1) * 256, rl.RAYWHITE)
 }
 
-draw_ground_tile :: proc(cx: i32, cy: i32, tx: i32, ty: i32, type: Floor) {
+draw_floor :: proc(cx: i32, cy: i32, tx: i32, ty: i32, type: Floor) {
     tcoord := floor_textures[type] * 16
     trec := rl.Rectangle{f32(tcoord[0]), f32(tcoord[1]), 16, 16}
     rl.DrawTextureRec(ground_tex, trec, {f32(256 * cx + 16 * tx), f32(256 * cy + 16 * ty)}, rl.WHITE)
+}
+
+draw_tile :: proc(cx: i32, cy: i32, tx: i32, ty: i32, type: TileType) {
+    if type == .NONE {
+        return
+    }
+    tcoord := tile_textures[type] * 16
+    trec := rl.Rectangle{f32(tcoord[0]), f32(tcoord[1]), 16, 16}
+    rl.DrawTextureRec(tile_tex, trec, {f32(256 * cx + 16 * tx), f32(256 * cy + 16 * ty)}, rl.WHITE)
 }
 
 clear_chunks :: proc() {

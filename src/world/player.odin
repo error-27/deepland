@@ -140,7 +140,7 @@ plr_update :: proc(delta: f32) {
             !rl.CheckCollisionRecs(plr_get_rectangle(), {f32(tpos[0]) * 16, f32(tpos[1]) * 16, 16, 16}) &&
             !is_entity_colliding(rl.Rectangle{f32(tpos[0]) * 16, f32(tpos[1]) * 16, 16, 16})
         {
-            result := world.place_tile(tpos[0], tpos[1], plr.depth, .TESTTILE)
+            result := world.place_tile(tpos[0], tpos[1], plr.depth, .WOOD)
             if result {
                 plr.inventory[plr.inv_select].amount -= 1
                 if plr.inventory[plr.inv_select].amount == 0 {
