@@ -38,6 +38,11 @@ block_drops := #partial [TileType]ItemStack {
     .TESTTILE = ItemStack{.BLOCK, 1}
 }
 
+floor_textures := [Floor][2]i32 {
+    .GRASS = {0, 0},
+    .DIRT = {1, 0}
+}
+
 ground_tex: rl.Texture2D
 
 init_world :: proc() {
@@ -73,14 +78,7 @@ draw_chunk :: proc(coord: [3]i32) {
     c := chunks[coord]
     for x in 0..<16 {
         for y in 0..<16 {
-            switch c.floors[x][y] {
-                case .DIRT:
-                    // rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, rl.BROWN)
-                    draw_ground_tile(c.x, c.y, i32(x), i32(y), 1)
-                case .GRASS:
-                    // rl.DrawRectangle(256 * c.x + i32(x) * 16, 256 * c.y + i32(y) * 16, 16, 16, rl.GREEN)
-                    draw_ground_tile(c.x, c.y, i32(x), i32(y), 0)
-            }
+            draw_ground_tile(c.x, c.y, i32(x), i32(y), c.floors[x][y])
 
             #partial switch c.tiles[x][y].type {
                 case .TESTTILE:
@@ -92,8 +90,10 @@ draw_chunk :: proc(coord: [3]i32) {
     rl.DrawLine(coord[0] * 256, coord[1] * 256, coord[0] * 256, (coord[1] + 1) * 256, rl.RAYWHITE)
 }
 
-draw_ground_tile :: proc(cx: i32, cy: i32, tx: i32, ty: i32, tindex: i32) {
-    rl.DrawTextureRec(ground_tex, {f32(16 * tindex), 0, 16, 16}, {f32(256 * cx + 16 * tx), f32(256 * cy + 16 * ty)}, rl.WHITE)
+draw_ground_tile :: proc(cx: i32, cy: i32, tx: i32, ty: i32, type: Floor) {
+    tcoord := floor_textures[type] * 16
+    trec := rl.Rectangle{f32(tcoord[0]), f32(tcoord[1]), 16, 16}
+    rl.DrawTextureRec(ground_tex, trec, {f32(256 * cx + 16 * tx), f32(256 * cy + 16 * ty)}, rl.WHITE)
 }
 
 clear_chunks :: proc() {
