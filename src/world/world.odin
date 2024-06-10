@@ -21,7 +21,9 @@ Tile :: struct {
 
 Floor :: enum {
     DIRT,
-    GRASS
+    GRASS,
+    STAIR_DOWN,
+    STAIR_UP
 }
 
 Chunk :: struct {
@@ -40,7 +42,9 @@ block_drops := #partial [TileType]ItemStack {
 
 floor_textures := [Floor][2]i32 {
     .GRASS = {0, 0},
-    .DIRT = {1, 0}
+    .DIRT = {1, 0},
+    .STAIR_DOWN = {0, 1},
+    .STAIR_UP = {1, 1}
 }
 
 ground_tex: rl.Texture2D
@@ -71,6 +75,11 @@ generate_chunk :: proc(x: i32, y: i32, depth: i32) {
 
     c.x = x
     c.y = y
+
+    if x + y % 3 == 0 {
+        c.floors[8][8] = .STAIR_UP
+    }
+
     chunks[{x, y, depth}] = c
 }
 
