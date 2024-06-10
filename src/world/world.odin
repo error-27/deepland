@@ -38,7 +38,13 @@ chunks: map[[3]i32]Chunk
 
 // Air should never break, right?? Well if it does something else is seriously wrong
 block_drops := #partial [TileType]ItemStack {
-    .WOOD = ItemStack{.BLOCK, 1}
+    .WOOD = ItemStack{.WOOD, 1},
+    .STONE = ItemStack{.STONE, 1}
+}
+
+item_tiles := #partial [ItemType]TileType {
+    .WOOD = .WOOD,
+    .STONE = .STONE
 }
 
 floor_textures := [Floor][2]i32 {

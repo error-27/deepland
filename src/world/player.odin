@@ -36,7 +36,8 @@ plr: Player
 
 plr_init :: proc() {
     plr = Player{}
-    plr.inventory[0] = {.BLOCK, 14}
+    plr.inventory[0] = {.WOOD, 14}
+    plr.inventory[1] = {.STONE, 14}
     plr.health = 10
     plr.inv_select = 0
     plr.depth = 0
@@ -134,13 +135,13 @@ plr_update :: proc(delta: f32) {
     }
 
     // Keyboard-based block placing
-    if rl.IsKeyPressed(rl.KeyboardKey.H) {
+    if rl.IsKeyPressed(rl.KeyboardKey.H) && plr.inventory[plr.inv_select].amount > 0 {
         tpos := plr_get_focused_tile()
         if 
             !rl.CheckCollisionRecs(plr_get_rectangle(), {f32(tpos[0]) * 16, f32(tpos[1]) * 16, 16, 16}) &&
             !is_entity_colliding(rl.Rectangle{f32(tpos[0]) * 16, f32(tpos[1]) * 16, 16, 16})
         {
-            result := world.place_tile(tpos[0], tpos[1], plr.depth, .WOOD)
+            result := world.place_tile(tpos[0], tpos[1], plr.depth, item_tiles[plr.inventory[plr.inv_select].type])
             if result {
                 plr.inventory[plr.inv_select].amount -= 1
                 if plr.inventory[plr.inv_select].amount == 0 {

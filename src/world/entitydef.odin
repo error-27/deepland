@@ -36,7 +36,7 @@ die_procs := [Species]proc(me: ^Entity) -> bool {
 @(private="file")
 item_init :: proc(x: i32, y: i32) -> Entity {
     edata := new(ItemData)
-    edata.type = .BLOCK
+    edata.type = .WOOD
 
     e := Entity{}
     e.x = x
@@ -61,8 +61,10 @@ item_draw :: proc(me: ^Entity) {
     switch data.type {
         case .NONE:
             rl.DrawCircle(me.x, me.y, 3, rl.MAGENTA)
-        case .BLOCK:
-            rl.DrawRectangle(me.x, me.y, 6, 6, rl.RED)
+        case .WOOD:
+            rl.DrawRectangle(me.x, me.y, 6, 6, rl.BROWN)
+        case .STONE:
+            rl.DrawRectangle(me.x, me.y, 6, 6, rl.GRAY)
     }
 }
 
@@ -160,7 +162,8 @@ DirVecs := [Direction][2]i32 {
 
 ItemType :: enum {
     NONE,
-    BLOCK,
+    WOOD,
+    STONE
 }
 
 FrogData :: struct {
